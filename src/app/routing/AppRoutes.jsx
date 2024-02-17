@@ -15,11 +15,11 @@ export default function AppRoutes() {
           <Route path='/*' element={<PrivateRoutes />} />
           <Route
             path='/Admin/PageTele/index.html'
-            element={<Navigate to={`/telesales${CrStocks?.ID && '?StockID=' + CrStocks?.ID}`} replace />}
+            element={<Navigate to={`/vi-dien-tu`} replace />}
           />
           <Route
             index
-            element={<Navigate to={`/telesales/list${CrStocks?.ID && '?StockID=' + CrStocks?.ID}`} replace />}
+            element={<Navigate to={`/vi-dien-tu`} replace />}
           />
         </Route>
       </Routes>

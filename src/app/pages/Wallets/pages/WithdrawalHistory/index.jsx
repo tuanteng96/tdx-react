@@ -11,6 +11,8 @@ import WalletsAPI from 'src/app/_ezs/api/wallet.api'
 import { formatString } from 'src/app/_ezs/utils/formatString'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
+import PickerFinish from '../../components/PickerFinish'
+import { toAbsolutePath } from 'src/app/_ezs/utils/assetPath'
 
 function WithdrawalHistoryPage(props) {
   const { pathname } = useLocation()
@@ -28,12 +30,14 @@ function WithdrawalHistoryPage(props) {
   }
 
   const { data, isLoading, isPreviousData, refetch } = useQuery({
-    queryKey: ['ListTelesales', queryConfig],
+    queryKey: ['ListWalletHistory', queryConfig],
     queryFn: async () => {
       const newQueryConfig = {
         ...queryConfig,
-        from: queryConfig.from, //2023-06-01
-        to: queryConfig.to //2023-06-30
+        pi: Number(queryConfig.pi),
+        ps: Number(queryConfig.ps),
+        from: queryConfig.from ? moment(queryConfig.from).format('YYYY-MM-DD') : '', //2023-06-01
+        to: queryConfig.to ? moment(queryConfig.to).format('YYYY-MM-DD') : '' //2023-06-30
       }
       let { data } = await WalletsAPI.list(newQueryConfig)
       return data?.lst || []
@@ -96,7 +100,7 @@ function WithdrawalHistoryPage(props) {
         key: 'MemberPhone',
         title: 'Số điện thoại',
         dataKey: 'MemberPhone',
-        width: 200,
+        width: 160,
         sortable: false
       },
       {
@@ -108,20 +112,46 @@ function WithdrawalHistoryPage(props) {
         cellRenderer: ({ rowData }) => formatString.formatVND(rowData.Value)
       },
       {
+        key: 'Banks',
+        title: 'Thông tin số tài khoản',
+        dataKey: 'Banks',
+        width: 300,
+        sortable: false,
+        cellRenderer: ({ rowData }) => (
+          <div>
+            <div>Số tài khoản : {JSON.parse(rowData.Member.BankInfo).STK}</div>
+            <div>Chủ tài khoản : {JSON.parse(rowData.Member.BankInfo).CTK}</div>
+            <div>Ngân hàng : {JSON.parse(rowData.Member.BankInfo).NH}</div>
+            <div>Chi nhánh : {JSON.parse(rowData.Member.BankInfo).CN}</div>
+          </div>
+        )
+      },
+      {
         key: 'Status',
         title: 'Trạng thái',
         dataKey: 'Status',
         width: 200,
         sortable: false,
-        cellRenderer: ({ rowData }) => <span className='text-warning'>Đang chờ</span>
+        cellRenderer: ({ rowData }) =>
+          rowData?.Status === 'HOAN_THANH' ? (
+            <span className='text-success'>Hoàn thành</span>
+          ) : (
+            <span className='text-warning'>Đang chờ</span>
+          )
       },
       {
         key: 'BillSrc',
         title: 'Ảnh hóa đơn',
         dataKey: 'BillSrc',
-        width: 200,
+        width: 150,
         sortable: false,
-        cellRenderer: ({ rowData }) => ''
+        cellRenderer: ({ rowData }) => (
+          <div>
+            <a href={toAbsolutePath(rowData.BillSrc)} target='_blank' rel='noreferrer'>
+              <img className='w-[100px]' src={toAbsolutePath(rowData.BillSrc)} alt='' />
+            </a>
+          </div>
+        )
       },
       {
         key: '#',
@@ -132,9 +162,22 @@ function WithdrawalHistoryPage(props) {
         headerClassName: 'justify-center',
         cellRenderer: ({ rowData }) => (
           <div className='flex justify-center w-full'>
-            <button className='bg-primary text-white mx-[3px] px-3 py-1 text-sm rounded font-medium'>Duyệt</button>
+            {rowData.Status !== 'HOAN_THANH' && (
+              <PickerFinish rowData={rowData}>
+                {({ open }) => (
+                  <button
+                    type='button'
+                    onClick={open}
+                    className='bg-primary text-white mx-[3px] px-3 py-1.5 text-sm rounded font-medium'
+                  >
+                    Duyệt
+                  </button>
+                )}
+              </PickerFinish>
+            )}
+
             <button
-              className='bg-danger text-white mx-[3px] px-3 py-1 text-sm rounded font-medium'
+              className='bg-danger text-white mx-[3px] px-3 py-1.5 text-sm rounded font-medium'
               onClick={() => onDelete(rowData)}
             >
               Xóa

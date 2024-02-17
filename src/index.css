@@ -63,3 +63,30 @@ html body.swal2-height-auto {
 .swal2-shown .swal2-html-container {
     line-height: 25px;
 }
+
+
+/* Checkbox */
+
+.checkbox .icon::after {
+    content: "";
+    border-color: transparent;
+    border-style: solid;
+    border-width: 0 2px 2px 0
+    /*rtl:ignore*/
+    !important;
+    -webkit-transform: rotate(45deg);
+    /*rtl:ignore*/
+    transform: rotate(45deg);
+    /*rtl:ignore*/
+    width: 5px;
+    height: 10px;
+}
+
+.checkbox input:checked+.icon.checkbox-primary {
+    @apply bg-primary
+}
+
+.checkbox input:checked+.icon::after {
+    border-color: #ffffff;
+    display: block;
+}
