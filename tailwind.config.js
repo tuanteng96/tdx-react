@@ -16,12 +16,14 @@ export default {
         "secondary": "#E4E6EF",
         "success": "#1BC5BD",
         "successhv": '#0BB7AF',
+        "successlight": "#C9F7F5",
         "info": "#8950FC",
         "warning": "#FFA800",
         "danger": "#F64E60",
+        "dangerlight": "#FFE2E5",
         "light": "#EBEDF3",
         "muted": "#B5B5C3",
-        gray: {
+        "gray": {
           100: '#f9f9f9',
           200: '#F4F4F4',
           300: '#d5d7da',

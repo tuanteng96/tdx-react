@@ -122,7 +122,6 @@ function WithdrawalHistoryPage(props) {
             <div>Số tài khoản : {JSON.parse(rowData.Member.BankInfo).STK}</div>
             <div>Chủ tài khoản : {JSON.parse(rowData.Member.BankInfo).CTK}</div>
             <div>Ngân hàng : {JSON.parse(rowData.Member.BankInfo).NH}</div>
-            <div>Chi nhánh : {JSON.parse(rowData.Member.BankInfo).CN}</div>
           </div>
         )
       },

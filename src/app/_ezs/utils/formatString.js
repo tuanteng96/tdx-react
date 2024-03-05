@@ -7,6 +7,14 @@ export const formatString = {
     }
     return arrText[0].charAt(0)
   },
+  formatPoint: price => {
+    if (!price || price === 0) {
+      return '0'
+    } else {
+      if (Number(price) < 1000) return 0
+      return Number(price) / 1000
+    }
+  },
   formatVND: price => {
     if (!price || price === 0) {
       return '0'
@@ -50,5 +58,16 @@ export const formatString = {
       obj.ID = 4
     }
     return obj
+  },
+  formatTypeWallet: (item) => {
+    if (item.Type === "NAP_QUY" && item.Source === "" && item.Value >= 0) {
+      return "Hoa hồng"
+    }
+    else if (item.Type === "NAP_QUY" && item.Source === "" && item.Value < 0) {
+      return "Rút tiền"
+    }
+    else {
+      return item.Desc
+    }
   }
 }

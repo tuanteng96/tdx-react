@@ -10,7 +10,7 @@ const SelectMembers = ({ value, StockID = 0, isSome = false, errorMessage, error
         Key: '',
         StockID: StockID || 0
       })
-      return data?.data ? data?.data.map((x) => ({ ...x, label: x.text, value: x.id })) : []
+      return data?.data ? data?.data.map((x) => ({ ...x, label: x.text + " - " + x.suffix, value: x.id })) : []
     }
   })
 
