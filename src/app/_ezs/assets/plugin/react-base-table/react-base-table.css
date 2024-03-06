@@ -287,11 +287,13 @@ html.dark {
 
 .BaseTable__footer {
     position: absolute;
-    left: 0;
+    left: -1px;
     right: 0;
     bottom: 0;
     overflow: hidden;
     background-color: #ffffff;
+    border-left: 1px solid #eee;
+    border-bottom: 1px solid #eee;
 }
 
 .BaseTable__resizing-line {

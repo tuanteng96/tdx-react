@@ -3,6 +3,7 @@ import http from '../utils/http'
 const ManageAPI = {
   getMembers: (body) => http.post(`/api/v3/fsearch@member`, JSON.stringify(body)),
   getOrders: (body) => http.post(`/api/v3/fsearch@order`, JSON.stringify(body)),
+  getRoses: (body) => http.post(`/api/v3/r23/bao-cao-thu-chi/danh-sach`, JSON.stringify(body)),
   FActive: ({ Mid, Value }) =>
     http.post(
       `/api/v3/Ftree@MemberFActive?mid=${Mid}&value=${Value}`,

@@ -8,6 +8,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { Input } from 'src/app/_ezs/partials/forms'
 import { SelectDistrict, SelectProvince, SelectWard } from 'src/app/_ezs/partials/select'
 import Select from 'react-select'
+import { InputDatePicker } from 'src/app/_ezs/partials/forms/input/InputDatePicker'
 
 function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
   const { control, handleSubmit, reset, watch, setValue } = useForm({
@@ -36,15 +37,12 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
                 autoComplete='off'
               >
                 <m.div
-                  className='absolute flex flex-col justify-center h-full py-8'
+                  className='absolute flex flex-col justify-center h-full py-8 w-[500px] max-w-full px-3 md:px-0'
                   initial={{ opacity: 0, top: '60%' }}
                   animate={{ opacity: 1, top: 'auto' }}
                   exit={{ opacity: 0, top: '60%' }}
                 >
-                  <Dialog.Panel
-                    tabIndex={0}
-                    className='bg-white max-w-full w-[500px] max-h-full flex flex-col rounded shadow-lg'
-                  >
+                  <Dialog.Panel tabIndex={0} className='bg-white max-w-full max-h-full flex flex-col rounded shadow-lg'>
                     <Dialog.Title className='relative flex justify-between px-5 py-5 border-b border-light'>
                       <div className='text-2xl font-bold'>Bộ lọc khách hàng</div>
                       <div
@@ -68,6 +66,44 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
                                 onChange={field.onChange}
                                 errorMessageForce={fieldState?.invalid}
                                 errorMessage={fieldState?.error?.message}
+                              />
+                            )}
+                          />
+                        </div>
+                      </div>
+                      <div className='mb-4'>
+                        <div>Từ ngày</div>
+                        <div className='mt-1'>
+                          <Controller
+                            name='from'
+                            control={control}
+                            render={({ field: { ref, ...field }, fieldState }) => (
+                              <InputDatePicker
+                                placeholderText='Chọn ngày'
+                                autoComplete='off'
+                                onChange={field.onChange}
+                                selected={field.value ? new Date(field.value) : null}
+                                {...field}
+                                dateFormat='dd/MM/yyyy'
+                              />
+                            )}
+                          />
+                        </div>
+                      </div>
+                      <div className='mb-4'>
+                        <div>Đến ngày</div>
+                        <div className='mt-1'>
+                          <Controller
+                            name='to'
+                            control={control}
+                            render={({ field: { ref, ...field }, fieldState }) => (
+                              <InputDatePicker
+                                placeholderText='Chọn ngày'
+                                autoComplete='off'
+                                onChange={field.onChange}
+                                selected={field.value ? new Date(field.value) : null}
+                                {...field}
+                                dateFormat='dd/MM/yyyy'
                               />
                             )}
                           />

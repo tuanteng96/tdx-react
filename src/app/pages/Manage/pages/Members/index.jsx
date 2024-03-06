@@ -13,6 +13,7 @@ import { useManage } from '../../ManageLayout'
 import PickerWallet from './components/PickerWallet'
 import PickerCard from './components/PickerCard'
 import PickerPoint from './components/PickerPoint'
+import { useWindowSize } from '@uidotdev/usehooks'
 
 function MembersPage() {
   const { open, onHide } = useManage()
@@ -25,8 +26,12 @@ function MembersPage() {
     ProvinceID: '',
     DistrictID: '',
     WardID: '',
-    FActive: ''
+    FActive: '',
+    from: '',
+    to: ''
   })
+
+  const { width } = useWindowSize()
 
   const Packages = useQuery({
     queryKey: ['Packages', filters],
@@ -53,7 +58,9 @@ function MembersPage() {
         ProvinceID: filters?.ProvinceID ? filters?.ProvinceID?.value : '',
         DistrictID: filters?.DistrictID ? filters?.DistrictID?.value : '',
         WardID: filters?.WardID ? filters?.WardID?.value : '',
-        FActive: filters?.FActive ? filters?.FActive?.value : ''
+        FActive: filters?.FActive ? filters?.FActive?.value : '',
+        from: filters.from ? moment(filters.from).format('YYYY-MM-DD') : '',
+        to: filters.to ? moment(filters.to).format('YYYY-MM-DD') : ''
       })
     },
     keepPreviousData: true
@@ -235,7 +242,7 @@ function MembersPage() {
         width: 150,
         sortable: false,
         headerClassName: 'justify-center',
-        frozen: 'right',
+        frozen: width > 767 ? 'right' : false,
         cellRenderer: ({ rowData }) =>
           rowData?.FActive !== 1 && (
             <div className='flex justify-center w-full'>
@@ -284,7 +291,7 @@ function MembersPage() {
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [Packages]
+    [Packages, width]
   )
 
   return (

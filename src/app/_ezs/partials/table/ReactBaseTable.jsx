@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import Table, { AutoResizer } from 'react-base-table'
 import Text from 'react-texty'
@@ -37,11 +37,12 @@ function ReactBaseTable({
   pagination,
   ...props
 }) {
-  //const tableRef = useRef(null)
+  const tableRef = useRef(null)
 
-  //   useEffect(() => {
-  //     tableRef?.current?.scrollToRow(0, 'start')
-  //   }, [filters])
+  useEffect(() => {
+    tableRef?.current?.scrollToRow(0, 'start')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageOffset])
 
   const TableCell = ({ className, cellData }) => (
     <Text tooltipMaxWidth={280} className={className}>
@@ -107,7 +108,9 @@ function ReactBaseTable({
                       </g>
                     </svg>
                     <div className='my-3 mt-6 text-2xl font-semibold'>Không có dữ liệu</div>
-                    <div className="max-w-[400px] text-center font-light">Hãy thử sử dụng các tùy chọn bộ lọc khác nhau để tìm thấy những gì bạn đang tìm kiếm</div>
+                    <div className='max-w-[400px] text-center font-light'>
+                      Hãy thử sử dụng các tùy chọn bộ lọc khác nhau để tìm thấy những gì bạn đang tìm kiếm
+                    </div>
                   </div>
                 )
               }

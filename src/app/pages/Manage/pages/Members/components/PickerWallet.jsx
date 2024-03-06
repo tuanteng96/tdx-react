@@ -33,14 +33,14 @@ function PickerWallet({ children, rowData, data }) {
                 ></m.div>
                 <div className='fixed inset-0 flex items-center justify-center z-[1003]'>
                   <m.div
-                    className='absolute flex flex-col justify-center h-full py-8'
+                    className='absolute flex flex-col justify-center h-full py-8 w-[500px] max-w-full px-3 md:px-0'
                     initial={{ opacity: 0, top: '60%' }}
                     animate={{ opacity: 1, top: 'auto' }}
                     exit={{ opacity: 0, top: '60%' }}
                   >
                     <Dialog.Panel
                       tabIndex={0}
-                      className='bg-white max-w-full w-[500px] max-h-full flex flex-col rounded shadow-lg'
+                      className='bg-white max-w-full max-h-full flex flex-col rounded shadow-lg'
                     >
                       <Dialog.Title className='relative flex justify-between px-5 py-5 border-b border-light'>
                         <div className='text-2xl font-bold'>Lịch sử Ví - {rowData?.FullName}</div>

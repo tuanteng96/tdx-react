@@ -5,9 +5,6 @@ import { Dialog } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Button } from 'src/app/_ezs/partials/button'
 import { Controller, useForm } from 'react-hook-form'
-import { Input } from 'src/app/_ezs/partials/forms'
-import Select from 'react-select'
-import { SelectAsyncMembers } from 'src/app/_ezs/partials/select'
 import { InputDatePicker } from 'src/app/_ezs/partials/forms/input/InputDatePicker'
 
 function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
@@ -55,64 +52,10 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
                     </Dialog.Title>
                     <div className='p-5 overflow-auto grow'>
                       <div className='mb-4'>
-                        <div>Từ khóa</div>
-                        <div className='mt-1'>
-                          <Controller
-                            name='key'
-                            control={control}
-                            render={({ field: { ref, ...field }, fieldState }) => (
-                              <Input
-                                placeholder='Họ tên, ID, Số điện thoại'
-                                value={field.value}
-                                onChange={field.onChange}
-                                errorMessageForce={fieldState?.invalid}
-                                errorMessage={fieldState?.error?.message}
-                              />
-                            )}
-                          />
-                        </div>
-                      </div>
-                      <div className='mb-4'>
-                        <div>Khách hàng</div>
-                        <div className='mt-1'>
-                          <Controller
-                            name='MemberID'
-                            control={control}
-                            render={({ field: { ref, ...field }, fieldState }) => (
-                              <SelectAsyncMembers
-                                isClearable
-                                className='select-control'
-                                value={field.value}
-                                onChange={(val) => field.onChange(val)}
-                              />
-                            )}
-                          />
-                        </div>
-                      </div>
-                      <div className='mb-4'>
                         <div>Từ ngày</div>
                         <div className='mt-1'>
                           <Controller
-                            name='from'
-                            control={control}
-                            render={({ field: { ref, ...field }, fieldState }) => (
-                              <InputDatePicker
-                                placeholderText='Chọn ngày'
-                                autoComplete='off'
-                                onChange={field.onChange}
-                                selected={field.value ? new Date(field.value) : null}
-                                {...field}
-                                dateFormat='dd/MM/yyyy'
-                              />
-                            )}
-                          />
-                        </div>
-                      </div>
-                      <div className='mb-4'>
-                        <div>Đến ngày</div>
-                        <div className='mt-1'>
-                          <Controller
-                            name='to'
+                            name='DateStart'
                             control={control}
                             render={({ field: { ref, ...field }, fieldState }) => (
                               <InputDatePicker
@@ -128,41 +71,19 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
                         </div>
                       </div>
                       <div>
-                        <div>Trạng thái</div>
+                        <div>Đến ngày</div>
                         <div className='mt-1'>
                           <Controller
-                            name='status'
+                            name='DateEnd'
                             control={control}
                             render={({ field: { ref, ...field }, fieldState }) => (
-                              <Select
-                                isClearable
-                                className='select-control'
-                                classNamePrefix='select'
-                                options={[
-                                  {
-                                    label: 'Hoàn thành',
-                                    value: 'finish'
-                                  },
-                                  {
-                                    label: 'Đang xử lý',
-                                    value: 'user_sent'
-                                  },
-                                  {
-                                    label: 'Hủy',
-                                    value: 'cancel'
-                                  }
-                                ]}
-                                placeholder='Chọn trạng thái'
-                                value={field.value}
-                                onChange={(val) => field.onChange(val)}
-                                menuPortalTarget={document.body}
-                                menuPosition='fixed'
-                                styles={{
-                                  menuPortal: (base) => ({
-                                    ...base,
-                                    zIndex: 9999
-                                  })
-                                }}
+                              <InputDatePicker
+                                placeholderText='Chọn ngày'
+                                autoComplete='off'
+                                onChange={field.onChange}
+                                selected={field.value ? new Date(field.value) : null}
+                                {...field}
+                                dateFormat='dd/MM/yyyy'
                               />
                             )}
                           />

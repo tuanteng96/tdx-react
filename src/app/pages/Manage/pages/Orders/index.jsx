@@ -6,6 +6,7 @@ import ReactBaseTable from 'src/app/_ezs/partials/table'
 import { formatString } from 'src/app/_ezs/utils/formatString'
 import Filter from './components/Filter'
 import { useManage } from '../../ManageLayout'
+import { useWindowSize } from '@uidotdev/usehooks'
 
 function OrdersPage() {
   const { open, onHide } = useManage()
@@ -19,6 +20,8 @@ function OrdersPage() {
     status: '',
     MemberID: ''
   })
+
+  const { width } = useWindowSize()
 
   const { data, isLoading, isPreviousData, refetch } = useQuery({
     queryKey: ['ListOrders', filters],
@@ -133,14 +136,14 @@ function OrdersPage() {
         width: 200,
         sortable: false,
         headerClassName: 'justify-center',
-        frozen: 'right',
+        frozen: width > 767 ? 'right' : false,
         cellRenderer: ({ rowData }) => (
           <div className='flex justify-center w-full'>
             <button
               type='button'
               className='bg-primary hover:bg-primaryhv text-white mx-[2px] rounded cursor-pointer px-3 py-3 transition text-[14px] flex items-center'
               onClick={() => {
-                window.top.onReloadFrame = refetch;
+                window.top.onReloadFrame = refetch
                 window.top.location.hash = `orderid/${rowData?.ID}`
               }}
             >
@@ -151,7 +154,7 @@ function OrdersPage() {
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [width]
   )
 
   return (

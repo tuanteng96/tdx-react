@@ -33,14 +33,14 @@ function PickerPoint({ children, rowData, data }) {
                 ></m.div>
                 <div className='fixed inset-0 flex items-center justify-center z-[1003]'>
                   <m.div
-                    className='absolute flex flex-col justify-center h-full py-8'
+                    className='absolute flex flex-col justify-center h-full py-8 w-[500px] max-w-full px-3 md:px-0'
                     initial={{ opacity: 0, top: '60%' }}
                     animate={{ opacity: 1, top: 'auto' }}
                     exit={{ opacity: 0, top: '60%' }}
                   >
                     <Dialog.Panel
                       tabIndex={0}
-                      className='bg-white max-w-full w-[500px] max-h-full flex flex-col rounded shadow-lg'
+                      className='bg-white max-w-full max-h-full flex flex-col rounded shadow-lg'
                     >
                       <Dialog.Title className='relative flex justify-between px-5 py-5 border-b border-light'>
                         <div className='text-2xl font-bold'>Lịch sử điểm - {rowData?.FullName}</div>
@@ -56,7 +56,7 @@ function PickerPoint({ children, rowData, data }) {
                           data
                             .sort((a, b) => moment(b.CreateDate).valueOf() - moment(a.CreateDate).valueOf())
                             .map((item, index) => (
-                              <div className='p-5 flex items-center border-b last:border-0' key={index}>
+                              <div className='p-5 flex border-b last:border-0' key={index}>
                                 <div className='flex items-center w-12'>
                                   {item.Value > 0 ? (
                                     <div className='w-12 h-12 bg-successlight text-success rounded-full flex items-center justify-center'>

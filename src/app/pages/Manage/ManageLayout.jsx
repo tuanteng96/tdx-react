@@ -22,7 +22,7 @@ function ManageLayout() {
             <NavLink
               className={({ isActive }) =>
                 clsx(
-                  'block px-4 rounded pt-3 pb-2.5 hover:text-primary hover:bg-[#f5f5f9] font-medium mr-2 text-[14px] transition-all',
+                  'block px-4 rounded pt-3 pb-2.5 hover:text-primary hover:bg-[#f5f5f9] font-medium md:mr-2 text-[14px] transition-all',
                   isActive ? 'bg-[#f5f5f9] text-primary' : 'text-[#6c7293]'
                 )
               }
@@ -33,7 +33,7 @@ function ManageLayout() {
             <NavLink
               className={({ isActive }) =>
                 clsx(
-                  'block px-4 rounded pt-3 pb-2.5 hover:text-primary hover:bg-[#f5f5f9] font-medium mr-2 text-[14px] transition-all',
+                  'block px-4 rounded pt-3 pb-2.5 hover:text-primary hover:bg-[#f5f5f9] font-medium md:mr-2 text-[14px] transition-all',
                   isActive ? 'bg-[#f5f5f9] text-primary' : 'text-[#6c7293]'
                 )
               }
@@ -44,13 +44,13 @@ function ManageLayout() {
             <NavLink
               className={({ isActive }) =>
                 clsx(
-                  'block px-4 rounded pt-3 pb-2.5 hover:text-primary hover:bg-[#f5f5f9] font-medium mr-2 text-[14px] transition-all',
+                  'block px-4 rounded pt-3 pb-2.5 hover:text-primary hover:bg-[#f5f5f9] font-medium md:mr-2 text-[14px] transition-all',
                   isActive ? 'bg-[#f5f5f9] text-primary' : 'text-[#6c7293]'
                 )
               }
               to='hoa-hong'
             >
-              Hoa hồng
+              Tiền
             </NavLink>
           </div>
           <div>
