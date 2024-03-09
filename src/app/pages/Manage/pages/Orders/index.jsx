@@ -1,12 +1,73 @@
 import moment from 'moment'
-import { useMemo, useState } from 'react'
-import { useQuery } from 'react-query'
+import { useEffect, useMemo, useState } from 'react'
+import { useMutation, useQuery } from 'react-query'
 import ManageAPI from 'src/app/_ezs/api/manage.api'
 import ReactBaseTable from 'src/app/_ezs/partials/table'
 import { formatString } from 'src/app/_ezs/utils/formatString'
 import Filter from './components/Filter'
 import { useManage } from '../../ManageLayout'
 import { useWindowSize } from '@uidotdev/usehooks'
+import Select from 'react-select'
+import ConfigAPI from 'src/app/_ezs/api/config.api'
+
+const TransportSelect = ({ List, rowData, refetch }) => {
+  let [value, setValue] = useState('')
+
+  useEffect(() => {
+    setValue(rowData?.Desc || '')
+  }, [rowData])
+
+  const updateMutation = useMutation({
+    mutationFn: async (body) => {
+      let { data } = await ManageAPI.updateOrderDesc(body)
+      await refetch()
+      return data
+    }
+  })
+
+  const onSubmit = (val) => {
+    updateMutation.mutate(
+      {
+        updated: [
+          {
+            ID: rowData?.ID,
+            Desc: val
+          }
+        ]
+      },
+      {
+        onSuccess: (data) => {
+          console.log(data)
+        }
+      }
+    )
+  }
+
+  return (
+    <Select
+      isLoading={updateMutation.isLoading}
+      isClearable
+      className='select-control w-full'
+      classNamePrefix='select'
+      options={List}
+      value={List.filter((x) => x.value === value)}
+      onChange={(val) => {
+        setValue(val?.value || '')
+        onSubmit(val?.value)
+      }}
+      placeholder='Chọn'
+      noOptionsMessage={() => 'Không có dữ liệu'}
+      menuPortalTarget={document.body}
+      menuPosition='fixed'
+      styles={{
+        menuPortal: (base) => ({
+          ...base,
+          zIndex: 9999
+        })
+      }}
+    />
+  )
+}
 
 function OrdersPage() {
   const { open, onHide } = useManage()
@@ -35,6 +96,24 @@ function OrdersPage() {
       })
     },
     keepPreviousData: true
+  })
+
+  const Transport = useQuery({
+    queryKey: ['Transport'],
+    queryFn: async () => {
+      let { data } = await ConfigAPI.getName('tdx_giaohang')
+      let newData = []
+      if (data?.data && data?.data?.length > 0) {
+        let { Value } = data?.data[0]
+        for (let k of Value.split(',')) {
+          newData.push({
+            label: k,
+            value: k
+          })
+        }
+      }
+      return newData
+    }
   })
 
   const columns = useMemo(
@@ -130,6 +209,16 @@ function OrdersPage() {
         sortable: false
       },
       {
+        key: 'transport',
+        title: 'Vận chuyển',
+        dataKey: 'transport',
+        cellRenderer: ({ rowData }) => (
+          <TransportSelect rowData={rowData} List={Transport?.data || []} refetch={refetch} />
+        ),
+        width: 300,
+        sortable: false
+      },
+      {
         key: '',
         title: '#',
         dataKey: '',
@@ -154,7 +243,7 @@ function OrdersPage() {
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [width]
+    [width, Transport, refetch]
   )
 
   return (
