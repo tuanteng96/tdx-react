@@ -19,7 +19,8 @@ const ManageAPI = {
   getProvince: () => http.get(`/api/v3/region25@getp?pid=0`),
   getDistrict: ({ ProvinceID }) => http.get(`/api/v3/region25@getd?pid=${ProvinceID}`),
   getWard: ({ ProvinceID, DistrictID }) => http.get(`/api/v3/region25@getw?did=${DistrictID}&pid=${ProvinceID}`),
-  updateOrderDesc: body => http.post(`/api/v3/order23@update`, JSON.stringify(body))
+  updateOrderDesc: (body) => http.post(`/api/v3/order23@update`, JSON.stringify(body)),
+  resetPwdMember: (body) => http.post(`/services/preview.aspx?cmd=setpwd_member`, body)
 }
 
 export default ManageAPI

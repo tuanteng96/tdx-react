@@ -14,6 +14,7 @@ import PickerWallet from './components/PickerWallet'
 import PickerCard from './components/PickerCard'
 import PickerPoint from './components/PickerPoint'
 import { useWindowSize } from '@uidotdev/usehooks'
+import { LockClosedIcon } from '@heroicons/react/24/outline'
 
 function MembersPage() {
   const { open, onHide } = useManage()
@@ -70,6 +71,10 @@ function MembersPage() {
     mutationFn: (body) => ManageAPI.FActive(body)
   })
 
+  const resetPwdMutation = useMutation({
+    mutationFn: (body) => ManageAPI.resetPwdMember(body)
+  })
+
   const onChangeActived = ({ Mid, Value }) => {
     Swal.fire({
       customClass: {
@@ -97,6 +102,39 @@ function MembersPage() {
     }).then((result) => {
       if (result.isConfirmed) {
         toast.success('Kích hoạt thành công.')
+      }
+    })
+  }
+
+  const onResetPassword = (rowData) => {
+    Swal.fire({
+      customClass: {
+        confirmButton: '!bg-success'
+      },
+      title: 'Reset mật khẩu',
+      html: `Khách hàng <span class="font-bold">${rowData.FullName} - ${rowData.MobilePhone}</span> sẽ được reset mật khẩu. Xác nhận reset ?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Reset Mật khẩu',
+      cancelButtonText: 'Đóng',
+      reverseButtons: true,
+      showLoaderOnConfirm: true,
+      preConfirm: async () => {
+        var bodyFormData = new FormData()
+        bodyFormData.append('cmd', 'setpwd_member')
+        bodyFormData.append('MemberID', rowData.ID)
+
+        const data = await resetPwdMutation.mutateAsync(bodyFormData)
+        await refetch()
+        return data
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          icon: 'success',
+          html: `<div class="text-[18px]"><div class="mb-3">Khách hàng <span class="font-bold">${rowData.FullName} - ${rowData.MobilePhone}</span> đã được reset mật khẩu.</div>Mật khẩu mới : <span class="text-danger font-bold">${result?.value?.data?.newpass}</span></div>`
+        })
       }
     })
   }
@@ -239,55 +277,65 @@ function MembersPage() {
         key: '',
         title: '#',
         dataKey: '',
-        width: 150,
+        width: 180,
         sortable: false,
         headerClassName: 'justify-center',
         frozen: width > 767 ? 'right' : false,
-        cellRenderer: ({ rowData }) =>
-          rowData?.FActive !== 1 && (
-            <div className='flex justify-center w-full'>
-              {Packages && Packages?.data?.length > 1 && (
-                <Popover>
-                  {({ onClose }) => (
-                    <div className='bg-white shadow-lg py-2.5 min-w-[150px]'>
-                      {Packages?.data?.map((x, i) => (
-                        <div
-                          key={i}
-                          className='text-[#3f4254] py-2.5 px-3 hover:bg-[#f3f6f9] cursor-pointer'
-                          onClick={() => {
-                            onClose()
-                            onChangeActived({
-                              Value: x,
-                              Mid: rowData.ID
-                            })
-                          }}
-                        >
-                          Gói {formatString.formatVND(x)}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </Popover>
-              )}
-              {Packages &&
-                Packages?.data?.length === 1 &&
-                Packages?.data?.map((x, i) => (
-                  <button
-                    key={i}
-                    type='button'
-                    className='bg-primary hover:bg-primaryhv text-white mx-[2px] rounded cursor-pointer px-4 py-3 transition text-[14px] flex items-center'
-                    onClick={() =>
-                      onChangeActived({
-                        Value: x,
-                        Mid: rowData.ID
-                      })
-                    }
-                  >
-                    Kích hoạt
-                  </button>
-                ))}
-            </div>
-          )
+        cellRenderer: ({ rowData }) => (
+          <div className='flex justify-center w-full'>
+            {rowData?.FActive !== 1 && (
+              <>
+                {Packages && Packages?.data?.length > 1 && (
+                  <Popover>
+                    {({ onClose }) => (
+                      <div className='bg-white shadow-lg py-2.5 min-w-[150px]'>
+                        {Packages?.data?.map((x, i) => (
+                          <div
+                            key={i}
+                            className='text-[#3f4254] py-2.5 px-3 hover:bg-[#f3f6f9] cursor-pointer'
+                            onClick={() => {
+                              onClose()
+                              onChangeActived({
+                                Value: x,
+                                Mid: rowData.ID
+                              })
+                            }}
+                          >
+                            Gói {formatString.formatVND(x)}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </Popover>
+                )}
+                {Packages &&
+                  Packages?.data?.length === 1 &&
+                  Packages?.data?.map((x, i) => (
+                    <button
+                      key={i}
+                      type='button'
+                      className='bg-primary hover:bg-primaryhv text-white mx-[2px] rounded cursor-pointer px-4 py-3 transition text-[14px] flex items-center'
+                      onClick={() =>
+                        onChangeActived({
+                          Value: x,
+                          Mid: rowData.ID
+                        })
+                      }
+                    >
+                      Kích hoạt
+                    </button>
+                  ))}
+              </>
+            )}
+            <button
+              type='button'
+              className='bg-success hover:bg-successhv text-white mx-[2px] rounded cursor-pointer px-3 py-3 transition text-[14px] flex items-center'
+              onClick={() => onResetPassword(rowData)}
+            >
+              <LockClosedIcon className='w-6' />
+            </button>
+          </div>
+        )
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
