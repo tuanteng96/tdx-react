@@ -13,8 +13,10 @@ import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
 import PickerFinish from '../../components/PickerFinish'
 import { toAbsolutePath } from 'src/app/_ezs/utils/assetPath'
+import { useRoles } from 'src/app/_ezs/hooks/useRoles'
 
 function WithdrawalHistoryPage(props) {
+  const { contact } = useRoles(['contact'])
   const { pathname } = useLocation()
   const queryParams = useQueryParams()
   const navigate = useNavigate()
@@ -183,11 +185,12 @@ function WithdrawalHistoryPage(props) {
             </button>
           </div>
         ),
-        frozen: 'right'
+        frozen: 'right',
+        hidden: !contact?.hasRight
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [contact]
   )
 
   return (

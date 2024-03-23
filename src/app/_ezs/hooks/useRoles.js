@@ -7,11 +7,11 @@ const hasRolesAuth = (data) => {
   if (data && data?.groups) {
     newHasRoles = data.groups.map((x) => ({
       ...x,
-      name: x.group + useId(),
+      name: x.group,
       children: x.rights
         ? x.rights.map((r) => ({
             ...r,
-            name: r.name + useId(),
+            name: r.name,
             children: r?.subs || null
           }))
         : []
@@ -24,9 +24,9 @@ const getHasRole = (Roles, CrStocks) => {
   let hasRight = Roles?.hasRight || false
   let StockRoles = Roles?.stocksList ? Roles?.stocksList.map((x) => ({ ...x, label: x.Title, value: x.ID })) : []
 
-  if (hasRight && !Roles.IsAllStock) {
-    hasRight = StockRoles.some((x) => x.ID === CrStocks.ID)
-  }
+  // if (hasRight && !Roles.IsAllStock) {
+  //   hasRight = StockRoles.some((x) => x.ID === CrStocks.ID)
+  // }
   return {
     hasRight,
     StockRoles,
@@ -41,7 +41,6 @@ export const useRoles = (nameRoles) => {
   let result = {}
 
   const { hasRoles } = hasRolesAuth(RightTree)
-
   if (!isMultiple) {
     const hasRolesItem = formatArray.findNodeByName(hasRoles, nameRoles)
     if (hasRolesItem) {
@@ -52,6 +51,7 @@ export const useRoles = (nameRoles) => {
   } else {
     for (let key of nameRoles) {
       const hasRolesItem = formatArray.findNodeByName(hasRoles, key)
+      
       if (hasRolesItem) {
         result[key] = { ...getHasRole(hasRolesItem, CrStocks) }
       } else {

@@ -9,6 +9,7 @@ import { useManage } from '../../ManageLayout'
 import { useWindowSize } from '@uidotdev/usehooks'
 import Select from 'react-select'
 import ConfigAPI from 'src/app/_ezs/api/config.api'
+import { useRoles } from 'src/app/_ezs/hooks/useRoles'
 
 const TransportSelect = ({ List, rowData, refetch }) => {
   let [value, setValue] = useState('')
@@ -70,6 +71,7 @@ const TransportSelect = ({ List, rowData, refetch }) => {
 }
 
 function OrdersPage() {
+  const { adminTools } = useRoles(['adminTools'])
   const { open, onHide } = useManage()
 
   const [filters, setFilters] = useState({
@@ -239,11 +241,12 @@ function OrdersPage() {
               Chi tiết & Thanh toán
             </button>
           </div>
-        )
+        ),
+        hidden: !adminTools?.hasRight
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [width, Transport, refetch]
+    [width, Transport, refetch, adminTools]
   )
 
   return (

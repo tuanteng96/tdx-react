@@ -15,10 +15,11 @@ import PickerCard from './components/PickerCard'
 import PickerPoint from './components/PickerPoint'
 import { useWindowSize } from '@uidotdev/usehooks'
 import { LockClosedIcon } from '@heroicons/react/24/outline'
+import { useRoles } from 'src/app/_ezs/hooks/useRoles'
 
 function MembersPage() {
+  const { adminTools } = useRoles(['adminTools'])
   const { open, onHide } = useManage()
-
   const [filters, setFilters] = useState({
     pi: 1,
     ps: 20,
@@ -335,13 +336,14 @@ function MembersPage() {
               <LockClosedIcon className='w-6' />
             </button>
           </div>
-        )
+        ),
+        hidden: !adminTools?.hasRight
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [Packages, width]
+    [Packages, width, adminTools]
   )
-
+  
   return (
     <div className='h-full p-4 flex flex-col'>
       <ReactBaseTable

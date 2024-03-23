@@ -48,65 +48,26 @@ if (import.meta.env.DEV) {
             {
               IsAllStock: true,
               hasRight: true,
+              name: 'pos_mng',
+              text: 'Pos quản lý'
+            },
+            {
+              IsAllStock: true,
+              hasRight: true,
+              name: 'adminTools',
+              text: 'Kích hoạt - duyệt đơn - reset mk'
+            },
+            {
+              IsAllStock: true,
+              hasRight: true,
               name: 'tele',
-              subs: [
-                {
-                  IsAllStock: true,
-                  hasRight: true,
-                  name: 'page_tele_basic',
-                  stocks: '',
-                  stocksList: [
-                    {
-                      Title: 'Cser Hà Nội',
-                      ID: 8975,
-                      ParentID: 778
-                    },
-                    {
-                      Title: 'Cser Hồ Chí Minh',
-                      ID: 10053,
-                      ParentID: 778
-                    },
-                    {
-                      Title: 'Cser Tuyên Quang',
-                      ID: 11210,
-                      ParentID: 778
-                    },
-                    {
-                      Title: 'CSER NAM HỘI AN',
-                      ID: 11226,
-                      ParentID: 778
-                    }
-                  ]
-                },
-                {
-                  IsAllStock: true,
-                  hasRight: true,
-                  name: 'page_tele_adv',
-                  stocks: '',
-                  stocksList: [
-                    {
-                      Title: 'Cser Hà Nội',
-                      ID: 8975,
-                      ParentID: 778
-                    },
-                    {
-                      Title: 'Cser Hồ Chí Minh',
-                      ID: 10053,
-                      ParentID: 778
-                    },
-                    {
-                      Title: 'Cser Tuyên Quang',
-                      ID: 11210,
-                      ParentID: 778
-                    },
-                    {
-                      Title: 'CSER NAM HỘI AN',
-                      ID: 11226,
-                      ParentID: 778
-                    }
-                  ]
-                }
-              ]
+              text: 'Rút tiền'
+            },
+            {
+              IsAllStock: true,
+              hasRight: true,
+              name: 'contact',
+              text: 'Duyệt - Xóa Rút tiền'
             }
           ]
         }
