@@ -10,6 +10,7 @@ import { useWindowSize } from '@uidotdev/usehooks'
 import Select from 'react-select'
 import ConfigAPI from 'src/app/_ezs/api/config.api'
 import { useRoles } from 'src/app/_ezs/hooks/useRoles'
+import useQueryParams from 'src/app/_ezs/hooks/useQueryParams'
 
 const TransportSelect = ({ List, rowData, refetch }) => {
   let [value, setValue] = useState('')
@@ -74,8 +75,10 @@ function OrdersPage() {
   const { adminTools } = useRoles(['adminTools'])
   const { open, onHide } = useManage()
 
+  const queryParams = useQueryParams()
+
   const [filters, setFilters] = useState({
-    key: '',
+    key: queryParams?.id || '',
     pi: 1,
     ps: 20,
     from: '',
@@ -120,19 +123,24 @@ function OrdersPage() {
 
   const columns = useMemo(
     () => [
-      {
-        key: 'ID',
-        title: 'ID',
-        dataKey: 'ID',
-        cellRenderer: ({ rowData }) => rowData.ID,
-        width: 100,
-        sortable: false
-      },
+      // {
+      //   key: 'ID',
+      //   title: 'ID',
+      //   dataKey: 'ID',
+      //   cellRenderer: ({ rowData }) => rowData.ID,
+      //   width: 100,
+      //   sortable: false
+      // },
       {
         key: 'CreateDate',
-        title: 'Ngày tạo',
+        title: 'ID / Ngày tạo',
         dataKey: 'CreateDate',
-        cellRenderer: ({ rowData }) => moment(rowData?.CreateDate).format('DD-MM-YYYY'),
+        cellRenderer: ({ rowData }) => (
+          <div>
+            <div className='font-bold'>{rowData.ID}</div>
+            <div>{moment(rowData?.CreateDate).format('DD-MM-YYYY')}</div>
+          </div>
+        ),
         width: 135,
         sortable: false
       },
@@ -160,22 +168,28 @@ function OrdersPage() {
         key: 'Member.FullName',
         title: 'Họ tên',
         dataKey: 'Member.FullName',
-        width: 250,
+        cellRenderer: ({ rowData }) => (
+          <div>
+            <div>{rowData?.Member?.FullName}</div>
+            <div>{rowData?.Member?.MobilePhone}</div>
+          </div>
+        ),
+        width: 220,
         sortable: false
       },
-      {
-        key: 'Member.MobilePhone',
-        title: 'Số điện thoại',
-        dataKey: 'Member.MobilePhone',
-        width: 150,
-        sortable: false
-      },
+      // {
+      //   key: 'Member.MobilePhone',
+      //   title: 'Số điện thoại',
+      //   dataKey: 'Member.MobilePhone',
+      //   width: 150,
+      //   sortable: false
+      // },
       {
         key: 'ToPay',
         title: 'Giá trị đơn hàng',
         dataKey: 'ToPay',
         cellRenderer: ({ rowData }) => formatString.formatVND(rowData?.ToPay),
-        width: 200,
+        width: 160,
         sortable: false
       },
       {
@@ -183,7 +197,7 @@ function OrdersPage() {
         title: 'Trừ từ điểm',
         dataKey: 'DIEM',
         cellRenderer: ({ rowData }) => formatString.formatPoint(rowData?.DIEM),
-        width: 180,
+        width: 160,
         sortable: false
       },
       {
@@ -191,7 +205,7 @@ function OrdersPage() {
         title: 'Trừ từ thẻ tiền',
         dataKey: 'TIEN',
         cellRenderer: ({ rowData }) => formatString.formatVND(rowData?.TIEN),
-        width: 180,
+        width: 160,
         sortable: false
       },
       {
@@ -199,7 +213,7 @@ function OrdersPage() {
         title: 'Thanh toán thêm',
         dataKey: 'ToPay-DIEM-TIEN',
         cellRenderer: ({ rowData }) => formatString.formatVND(rowData?.ToPay - rowData?.DIEM - rowData?.TIEN),
-        width: 180,
+        width: 160,
         sortable: false
       },
       {
@@ -207,7 +221,7 @@ function OrdersPage() {
         title: 'Nợ',
         dataKey: 'RemainPay',
         cellRenderer: ({ rowData }) => formatString.formatVND(rowData?.RemainPay),
-        width: 180,
+        width: 160,
         sortable: false
       },
       {

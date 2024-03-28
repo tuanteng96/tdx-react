@@ -109,47 +109,71 @@ function MembersPage() {
 
   const onResetPassword = (rowData) => {
     Swal.fire({
-      customClass: {
-        confirmButton: '!bg-success'
+      title: 'Nhật mật khẩu bảo mật',
+      input: 'password',
+      inputLabel: 'Bạn cần nhập mật khẩu bảo mật trước khi thực hiện reset mật khẩu.',
+      inputPlaceholder: 'Nhập mật khẩu',
+      inputAttributes: {
+        maxlength: '10',
+        autocapitalize: 'off',
+        autocorrect: 'off'
       },
-      title: 'Reset mật khẩu',
-      html: `Khách hàng <span class="font-bold">${rowData.FullName} - ${rowData.MobilePhone}</span> sẽ được reset mật khẩu. Xác nhận reset ?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Reset Mật khẩu',
       cancelButtonText: 'Đóng',
-      reverseButtons: true,
-      showLoaderOnConfirm: true,
-      preConfirm: async () => {
-        var bodyFormData = new FormData()
-        bodyFormData.append('cmd', 'setpwd_member')
-        bodyFormData.append('MemberID', rowData.ID)
-
-        const data = await resetPwdMutation.mutateAsync(bodyFormData)
-        await refetch()
-        return data
+      showCancelButton: true,
+      confirmButtonText: 'Xác nhận',
+      preConfirm: async (value) => {
+        if (value !== '9@0!') {
+          return Swal.showValidationMessage(`Mật khẩu không chính xác`)
+        }
       },
       allowOutsideClick: () => !Swal.isLoading()
     }).then((result) => {
       if (result.isConfirmed) {
         Swal.fire({
-          icon: 'success',
-          html: `<div class="text-[18px]"><div class="mb-3">Khách hàng <span class="font-bold">${rowData.FullName} - ${rowData.MobilePhone}</span> đã được reset mật khẩu.</div>Mật khẩu mới : <span class="text-danger font-bold">${result?.value?.data?.newpass}</span></div>`
+          customClass: {
+            confirmButton: '!bg-success'
+          },
+          title: 'Reset mật khẩu',
+          html: `Khách hàng <span class="font-bold">${rowData.FullName} - ${rowData.MobilePhone}</span> sẽ được reset mật khẩu. Xác nhận reset ?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Reset Mật khẩu',
+          cancelButtonText: 'Đóng',
+          reverseButtons: true,
+          showLoaderOnConfirm: true,
+          preConfirm: async () => {
+            var bodyFormData = new FormData()
+            bodyFormData.append('cmd', 'setpwd_member')
+            bodyFormData.append('MemberID', rowData.ID)
+
+            const data = await resetPwdMutation.mutateAsync(bodyFormData)
+            await refetch()
+            return data
+          },
+          allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire({
+              icon: 'success',
+              html: `<div class="text-[18px]"><div class="mb-3">Khách hàng <span class="font-bold">${rowData.FullName} - ${rowData.MobilePhone}</span> đã được reset mật khẩu.</div>Mật khẩu mới : <span class="text-danger font-bold">${result?.value?.data?.newpass}</span></div>`
+            })
+          }
         })
       }
     })
+    
   }
 
   const columns = useMemo(
     () => [
-      {
-        key: 'ID',
-        title: 'ID',
-        dataKey: 'ID',
-        cellRenderer: ({ rowData }) => rowData.ID,
-        width: 100,
-        sortable: false
-      },
+      // {
+      //   key: 'ID',
+      //   title: 'ID',
+      //   dataKey: 'ID',
+      //   cellRenderer: ({ rowData }) => rowData.ID,
+      //   width: 100,
+      //   sortable: false
+      // },
       {
         key: 'CreateDate',
         title: 'Ngày tạo',
@@ -162,16 +186,30 @@ function MembersPage() {
         key: 'FullName',
         title: 'Họ tên',
         dataKey: 'FullName',
-        width: 250,
+        cellRenderer: ({ rowData }) => (
+          <div>
+            <div>
+              [{rowData.ID}] {rowData.FullName}
+            </div>
+            <div>{rowData?.MobilePhone}</div>
+            <div>
+              {rowData.HomeAddress}
+              <div>
+                {rowData?.WardTitle} - {rowData?.DistrictTitle} - {rowData?.ProvinceTitle}
+              </div>
+            </div>
+          </div>
+        ),
+        width: 280,
         sortable: false
       },
-      {
-        key: 'MobilePhone',
-        title: 'Số điện thoại',
-        dataKey: 'MobilePhone',
-        width: 150,
-        sortable: false
-      },
+      // {
+      //   key: 'MobilePhone',
+      //   title: 'Số điện thoại',
+      //   dataKey: 'MobilePhone',
+      //   width: 150,
+      //   sortable: false
+      // },
       {
         key: 'Gender',
         title: 'Giới tính',
@@ -180,21 +218,21 @@ function MembersPage() {
         width: 100,
         sortable: false
       },
-      {
-        key: 'HomeAddress',
-        title: 'Địa chỉ',
-        dataKey: 'HomeAddress',
-        cellRenderer: ({ rowData }) => (
-          <div>
-            {rowData.HomeAddress}
-            <div>
-              {rowData?.WardTitle} - {rowData?.DistrictTitle} - {rowData?.ProvinceTitle}
-            </div>
-          </div>
-        ),
-        width: 320,
-        sortable: false
-      },
+      // {
+      //   key: 'HomeAddress',
+      //   title: 'Địa chỉ',
+      //   dataKey: 'HomeAddress',
+      //   cellRenderer: ({ rowData }) => (
+      //     <div>
+      //       {rowData.HomeAddress}
+      //       <div>
+      //         {rowData?.WardTitle} - {rowData?.DistrictTitle} - {rowData?.ProvinceTitle}
+      //       </div>
+      //     </div>
+      //   ),
+      //   width: 320,
+      //   sortable: false
+      // },
       {
         key: 'His',
         title: 'Trạng thái',
@@ -222,7 +260,7 @@ function MembersPage() {
             )}
           </PickerWallet>
         ),
-        width: 200,
+        width: 150,
         sortable: false,
         style: {
           fontWeight: 600,
@@ -244,7 +282,7 @@ function MembersPage() {
             )}
           </PickerCard>
         ),
-        width: 200,
+        width: 150,
         sortable: false,
         style: {
           fontWeight: 600,
@@ -266,7 +304,7 @@ function MembersPage() {
             )}
           </PickerPoint>
         ),
-        width: 200,
+        width: 150,
         sortable: false,
         style: {
           fontWeight: 600,
@@ -343,7 +381,7 @@ function MembersPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [Packages, width, adminTools]
   )
-  
+
   return (
     <div className='h-full p-4 flex flex-col'>
       <ReactBaseTable

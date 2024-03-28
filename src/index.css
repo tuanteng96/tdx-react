@@ -64,6 +64,11 @@ html body.swal2-height-auto {
     line-height: 25px;
 }
 
+div:where(.swal2-container) label:where(.swal2-input-label) {
+    text-align: center;
+    padding: 0 20px;
+}
+
 
 /* Checkbox */
 

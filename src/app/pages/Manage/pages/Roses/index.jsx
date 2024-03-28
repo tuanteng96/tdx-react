@@ -7,6 +7,7 @@ import { formatString } from 'src/app/_ezs/utils/formatString'
 import Filter from './components/Filter'
 import { useManage } from '../../ManageLayout'
 import { useWindowSize } from '@uidotdev/usehooks'
+import { NavLink } from 'react-router-dom'
 
 const RenderFooter = forwardRef((props, ref) => {
   const { data } = props
@@ -39,8 +40,8 @@ function RosesPage() {
   const [filters, setFilters] = useState({
     pi: 1,
     ps: 20,
-    DateStart: '',
-    DateEnd: '',
+    DateStart: moment().subtract(3, 'days').toDate(),
+    DateEnd: moment().toDate(),
     CustomType: '',
     PaymentMethods: '',
     StockID: '',
@@ -72,16 +73,28 @@ function RosesPage() {
         title: 'Ngày tạo',
         dataKey: 'CreateDate',
         cellRenderer: ({ rowData }) => moment(rowData?.CreateDate).format('DD-MM-YYYY'),
-        width: 150,
+        width: 130,
         sortable: false,
         footerRenderer: () => <div>a</div>
+      },
+      {
+        key: 'SourceID',
+        title: 'ID đơn hàng',
+        dataKey: 'SourceID',
+        cellRenderer: ({ rowData }) => (
+          <NavLink className='text-primary' to={`/quan-ly/don-hang?id=${rowData.SourceID}`}>
+            {rowData.SourceID}
+          </NavLink>
+        ),
+        width: 130,
+        sortable: false
       },
       {
         key: 'TM',
         title: 'Tiền mặt',
         dataKey: 'TM',
         cellRenderer: ({ rowData }) => formatString.formatVNDPositive(rowData.TM),
-        width: 200,
+        width: 160,
         sortable: false
       },
       {
@@ -89,7 +102,7 @@ function RosesPage() {
         title: 'Chuyển khoản',
         dataKey: 'CK',
         cellRenderer: ({ rowData }) => formatString.formatVNDPositive(rowData.CK),
-        width: 200,
+        width: 160,
         sortable: false
       },
       {
@@ -98,7 +111,7 @@ function RosesPage() {
         dataKey: 'TT',
         cellRenderer: ({ rowData }) =>
           formatString.formatVNDPositive(Math.abs(rowData.CK) + Math.abs(rowData.QT) + Math.abs(rowData.TM)),
-        width: 200,
+        width: 160,
         sortable: false
       },
       {
@@ -113,16 +126,22 @@ function RosesPage() {
         key: 'Member.FullName',
         title: 'Khách hàng',
         dataKey: 'Member.FullName',
+        cellRenderer: ({ rowData }) => (
+          <div>
+            <div>{rowData?.Member?.FullName}</div>
+            <div>{rowData?.Member?.MobilePhone}</div>
+          </div>
+        ),
         width: 250,
         sortable: false
       },
-      {
-        key: 'Member.MobilePhone',
-        title: 'Số điện thoại',
-        dataKey: 'Member.MobilePhone',
-        width: 150,
-        sortable: false
-      }
+      // {
+      //   key: 'Member.MobilePhone',
+      //   title: 'Số điện thoại',
+      //   dataKey: 'Member.MobilePhone',
+      //   width: 150,
+      //   sortable: false
+      // }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [width]
