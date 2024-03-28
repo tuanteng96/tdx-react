@@ -88,28 +88,34 @@ function WithdrawalHistoryPage(props) {
         title: 'Thời gian tạo',
         dataKey: 'CreateDate',
         cellRenderer: ({ rowData }) => moment(rowData?.CreateDate).format('HH:mm DD-MM-YYYY'),
-        width: 180,
+        width: 170,
         sortable: false
       },
       {
         key: 'MemberName',
         title: 'Khách hàng',
         dataKey: 'MemberName',
-        width: 250,
+        cellRenderer: ({ rowData }) => (
+          <div>
+            <div>{rowData.MemberName}</div>
+            <div>{rowData.MemberPhone}</div>
+          </div>
+        ),
+        width: 200,
         sortable: false
       },
-      {
-        key: 'MemberPhone',
-        title: 'Số điện thoại',
-        dataKey: 'MemberPhone',
-        width: 160,
-        sortable: false
-      },
+      // {
+      //   key: 'MemberPhone',
+      //   title: 'Số điện thoại',
+      //   dataKey: 'MemberPhone',
+      //   width: 160,
+      //   sortable: false
+      // },
       {
         key: 'Value',
         title: 'Số tiền',
         dataKey: 'Value',
-        width: 200,
+        width: 160,
         sortable: false,
         cellRenderer: ({ rowData }) => formatString.formatVND(rowData.Value)
       },
@@ -131,7 +137,7 @@ function WithdrawalHistoryPage(props) {
         key: 'Status',
         title: 'Trạng thái',
         dataKey: 'Status',
-        width: 200,
+        width: 160,
         sortable: false,
         cellRenderer: ({ rowData }) =>
           rowData?.Status === 'HOAN_THANH' ? (
