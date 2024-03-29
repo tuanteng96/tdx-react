@@ -40,7 +40,7 @@ function RosesPage() {
   const [filters, setFilters] = useState({
     pi: 1,
     ps: 20,
-    DateStart: moment().subtract(3, 'days').toDate(),
+    DateStart: moment().subtract(2, 'days').toDate(),
     DateEnd: moment().toDate(),
     CustomType: '',
     PaymentMethods: '',
