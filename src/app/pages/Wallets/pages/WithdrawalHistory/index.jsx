@@ -184,8 +184,9 @@ function WithdrawalHistoryPage(props) {
             )}
 
             <button
-              className='bg-danger text-white mx-[3px] px-3 py-1.5 text-sm rounded font-medium'
+              className='bg-danger text-white mx-[3px] px-3 py-1.5 text-sm rounded font-medium disabled:opacity-50'
               onClick={() => onDelete(rowData)}
+              disabled={rowData.Status === 'HOAN_THANH'}
             >
               Xóa
             </button>
