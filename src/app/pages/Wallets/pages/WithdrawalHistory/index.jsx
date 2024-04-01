@@ -14,13 +14,16 @@ import { toast } from 'react-toastify'
 import PickerFinish from '../../components/PickerFinish'
 import { toAbsolutePath } from 'src/app/_ezs/utils/assetPath'
 import { useRoles } from 'src/app/_ezs/hooks/useRoles'
+import { useAuth } from 'src/app/_ezs/core/Auth'
 
 function WithdrawalHistoryPage(props) {
   const { contact } = useRoles(['contact'])
   const { pathname } = useLocation()
   const queryParams = useQueryParams()
   const navigate = useNavigate()
-
+  
+  const { auth } = useAuth()
+  
   const queryConfig = {
     pi: queryParams.pi || 1,
     ps: queryParams.ps || 15,
@@ -186,7 +189,7 @@ function WithdrawalHistoryPage(props) {
             <button
               className='bg-danger text-white mx-[3px] px-3 py-1.5 text-sm rounded font-medium disabled:opacity-50'
               onClick={() => onDelete(rowData)}
-              disabled={rowData.Status === 'HOAN_THANH'}
+              disabled={auth.ID !== 1 && rowData.Status === 'HOAN_THANH'}
             >
               Xóa
             </button>
