@@ -10,12 +10,31 @@ const OrdersPage = lazy(() => import('./pages/Orders'))
 const RosesPage = lazy(() => import('./pages/Roses'))
 
 function ManagePage(props) {
-  const { pos_mng } = useRoles(['pos_mng'])
+  const { quan_ly_khach_hang, quan_ly_don_hang, quan_ly_tien } = useRoles([
+    'quan_ly_khach_hang',
+    'quan_ly_don_hang',
+    'quan_ly_tien'
+  ])
+
+  const checkFirstRouter = () => {
+    if (quan_ly_khach_hang?.hasRight) {
+      return 'khach-hang'
+    } else if (quan_ly_don_hang?.hasRight) {
+      return 'don-hang'
+    } else {
+      return 'hoa-hong'
+    }
+  }
+
   return (
     <Routes>
-      <Route element={<RoleAccess roles={pos_mng?.hasRight} />}>
+      <Route
+        element={
+          <RoleAccess roles={quan_ly_khach_hang?.hasRight || quan_ly_don_hang?.hasRight || quan_ly_tien?.hasRight} />
+        }
+      >
         <Route element={<ManageLayout />}>
-          <Route index element={<Navigate to='khach-hang' />} />
+          <Route index element={<Navigate to={checkFirstRouter()} />} />
           <Route
             path='khach-hang'
             element={

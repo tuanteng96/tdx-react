@@ -15,13 +15,14 @@ import PickerFinish from '../../components/PickerFinish'
 import { toAbsolutePath } from 'src/app/_ezs/utils/assetPath'
 import { useRoles } from 'src/app/_ezs/hooks/useRoles'
 import { useAuth } from 'src/app/_ezs/core/Auth'
+import { useWindowSize } from '@uidotdev/usehooks'
 
 function WithdrawalHistoryPage(props) {
-  const { contact } = useRoles(['contact'])
+  const { duyet_xoa_rut_tien } = useRoles(['duyet_xoa_rut_tien'])
   const { pathname } = useLocation()
   const queryParams = useQueryParams()
   const navigate = useNavigate()
-  
+  const { width } = useWindowSize()
   const { auth } = useAuth()
   
   const queryConfig = {
@@ -189,18 +190,18 @@ function WithdrawalHistoryPage(props) {
             <button
               className='bg-danger text-white mx-[3px] px-3 py-1.5 text-sm rounded font-medium disabled:opacity-50'
               onClick={() => onDelete(rowData)}
-              disabled={auth.ID !== 1 && rowData.Status === 'HOAN_THANH'}
+              disabled={auth?.ID !== 1 && rowData.Status === 'HOAN_THANH'}
             >
               Xóa
             </button>
           </div>
         ),
-        frozen: 'right',
-        hidden: !contact?.hasRight
+        frozen: width > 767 ? 'right' : false,
+        hidden: !duyet_xoa_rut_tien?.hasRight
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [contact]
+    [duyet_xoa_rut_tien, width]
   )
 
   return (

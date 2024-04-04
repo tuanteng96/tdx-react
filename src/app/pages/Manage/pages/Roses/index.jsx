@@ -20,14 +20,14 @@ const RenderFooter = forwardRef((props, ref) => {
 
   return (
     <div className='h-full flex border-l border-l-[#eee] overflow-auto' id='el-footer' ref={refElm}>
-      <div className='w-[150px] min-w-[150px] border-r border-r-[#eee]'></div>
-      <div className='w-[200px] min-w-[200px] border-r border-r-[#eee] flex items-center font-bold px-3.5'>
+      <div className='w-[260px] min-w-[260px] border-r border-r-[#eee]'></div>
+      <div className='w-[160px] min-w-[160px] border-r border-r-[#eee] flex items-center font-bold px-3.5'>
         {formatString.formatVND(data?.THU_TM)}
       </div>
-      <div className='w-[200px] min-w-[200px] border-r border-r-[#eee] flex items-center font-bold px-3.5'>
+      <div className='w-[160px] min-w-[160px] border-r border-r-[#eee] flex items-center font-bold px-3.5'>
         {formatString.formatVND(data?.THU_CK)}
       </div>
-      <div className='w-[200px] min-w-[200px] border-r border-r-[#eee] flex items-center font-bold px-3.5 text-success'>
+      <div className='w-[160px] min-w-[160px] border-r border-r-[#eee] flex items-center font-bold px-3.5 text-success'>
         {formatString.formatVND(data?.TONG_THU)}
       </div>
     </div>
@@ -46,7 +46,8 @@ function RosesPage() {
     PaymentMethods: '',
     StockID: '',
     TagsTC: '',
-    TypeTC: ''
+    TypeTC: '',
+    MemberID: ''
   })
 
   const { width } = useWindowSize()
@@ -60,7 +61,8 @@ function RosesPage() {
         Pi: filters.pi,
         Ps: filters.ps,
         DateStart: filters.DateStart ? moment(filters.DateStart).format('DD/MM/YYYY') : '',
-        DateEnd: filters.DateEnd ? moment(filters.DateEnd).format('DD/MM/YYYY') : ''
+        DateEnd: filters.DateEnd ? moment(filters.DateEnd).format('DD/MM/YYYY') : '',
+        MemberID: filters.MemberID ? filters.MemberID.value : ''
       })
       return data?.result
     },
@@ -171,7 +173,6 @@ function RosesPage() {
         onScroll={({ scrollLeft }) => {
           const el = childCompRef.current.getRef()
           if (el?.current) {
-            console.log(el.current.scrollLeft)
             el.current.scrollLeft = scrollLeft
           }
         }}

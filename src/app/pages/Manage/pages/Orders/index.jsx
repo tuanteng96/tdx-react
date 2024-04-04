@@ -72,7 +72,7 @@ const TransportSelect = ({ List, rowData, refetch }) => {
 }
 
 function OrdersPage() {
-  const { adminTools } = useRoles(['adminTools'])
+  const { duyet_don } = useRoles(['duyet_don'])
   const { open, onHide } = useManage()
 
   const queryParams = useQueryParams()
@@ -216,14 +216,14 @@ function OrdersPage() {
         width: 160,
         sortable: false
       },
-      {
-        key: 'RemainPay',
-        title: 'Nợ',
-        dataKey: 'RemainPay',
-        cellRenderer: ({ rowData }) => formatString.formatVND(rowData?.RemainPay),
-        width: 160,
-        sortable: false
-      },
+      // {
+      //   key: 'RemainPay',
+      //   title: 'Nợ',
+      //   dataKey: 'RemainPay',
+      //   cellRenderer: ({ rowData }) => formatString.formatVND(rowData?.RemainPay),
+      //   width: 160,
+      //   sortable: false
+      // },
       {
         key: 'transport',
         title: 'Vận chuyển',
@@ -256,11 +256,11 @@ function OrdersPage() {
             </button>
           </div>
         ),
-        hidden: !adminTools?.hasRight
+        hidden: !duyet_don?.hasRight
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [width, Transport, refetch, adminTools]
+    [width, Transport, refetch, duyet_don]
   )
 
   return (

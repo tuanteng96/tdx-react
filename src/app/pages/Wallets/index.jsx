@@ -7,10 +7,10 @@ import SuspensedView from 'src/app/routing/SuspensedView'
 const WithdrawalHistoryPage = lazy(() => import('./pages/WithdrawalHistory'))
 
 function WalletsPage(props) {
-  const { tele } = useRoles(['tele'])
+  const { rut_tien } = useRoles(['rut_tien'])
   return (
     <Routes>
-      <Route element={<RoleAccess roles={tele?.hasRight} />}>
+      <Route element={<RoleAccess roles={rut_tien?.hasRight} />}>
         <Route index element={<Navigate to={`lich-su-rut-tien`} />} />
         <Route
           path='lich-su-rut-tien'

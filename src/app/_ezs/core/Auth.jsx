@@ -43,31 +43,209 @@ if (import.meta.env.DEV) {
     rightTree: {
       groups: [
         {
+          group: 'Cài đặt',
+          rights: [
+            {
+              name: 'config',
+              text: 'Thông tin thương hiệu',
+              hasRight: true,
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
+            },
+            {
+              name: 'user',
+              text: 'Quản lý nhân viên',
+              hasRight: true,
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
+            },
+            {
+              name: 'permission',
+              text: 'Phân quyền',
+              hasRight: true,
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
+            },
+            {
+              name: 'type',
+              text: 'Quản lý sản phẩm - dịch vụ',
+              hasRight: true,
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
+            },
+            {
+              name: 'promotion',
+              text: 'Khuyến mại-Voucher',
+              hasRight: true,
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
+            }
+          ]
+        },
+        {
+          group: 'Web/app',
+          rights: [
+            {
+              name: 'article',
+              text: 'Nội dung / Blogs',
+              hasRight: true,
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
+            },
+            {
+              name: 'adv',
+              text: 'Media / Video',
+              hasRight: true,
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
+            },
+            {
+              name: 'notification',
+              text: 'Thông báo web/app',
+              hasRight: true,
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
+            }
+          ]
+        },
+        {
           group: 'Phần mềm',
           rights: [
             {
-              IsAllStock: true,
+              name: 'quan_ly_khach_hang',
+              text: 'Quản lý khách hàng',
               hasRight: true,
-              name: 'pos_mng',
-              text: 'Pos quản lý'
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
             },
             {
-              IsAllStock: true,
+              name: 'quan_ly_don_hang',
+              text: 'Quản lý đơn hàng',
               hasRight: true,
-              name: 'adminTools',
-              text: 'Kích hoạt - duyệt đơn - reset mk'
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
             },
             {
-              IsAllStock: true,
+              name: 'quan_ly_tien',
+              text: 'Quản lý tiền',
               hasRight: true,
-              name: 'tele',
-              text: 'Rút tiền'
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
             },
             {
-              IsAllStock: true,
+              name: 'kich_hoat',
+              text: 'Kích hoạt',
               hasRight: true,
-              name: 'contact',
-              text: 'Duyệt - Xóa Rút tiền'
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
+            },
+            {
+              name: 'duyet_don',
+              text: 'Duyệt đơn',
+              hasRight: true,
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
+            },
+            {
+              name: 'reset_mat_khau',
+              text: 'Reset mật khẩu',
+              hasRight: true,
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
+            },
+            {
+              name: 'rut_tien',
+              text: 'Rút tiền',
+              hasRight: true,
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
+            },
+            {
+              name: 'duyet_xoa_rut_tien',
+              text: 'Duyệt - Xóa Rút tiền',
+              hasRight: true,
+              stocksList: [
+                {
+                  ID: 11326,
+                  Title: 'Tiêu Dùng Xanh'
+                }
+              ],
+              IsAllStock: true
             }
           ]
         }

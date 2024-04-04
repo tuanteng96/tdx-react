@@ -18,8 +18,8 @@ import { LockClosedIcon } from '@heroicons/react/24/outline'
 import { useRoles } from 'src/app/_ezs/hooks/useRoles'
 
 function MembersPage() {
-  const { adminTools } = useRoles(['adminTools'])
-  const { open, onHide } = useManage()
+  const { kich_hoat, duyet_don, reset_mat_khau } = useRoles(['kich_hoat', 'duyet_don', 'reset_mat_khau'])
+  const { open, onHide, setTotal } = useManage()
   const [filters, setFilters] = useState({
     pi: 1,
     ps: 20,
@@ -65,7 +65,13 @@ function MembersPage() {
         to: filters.to ? moment(filters.to).format('YYYY-MM-DD') : ''
       })
     },
-    keepPreviousData: true
+    keepPreviousData: true,
+    onSuccess: ({data}) => {
+      setTotal((prevState) => ({
+        ...prevState,
+        Members: data.total
+      }))
+    }
   })
 
   const activedMutation = useMutation({
@@ -161,7 +167,6 @@ function MembersPage() {
         })
       }
     })
-    
   }
 
   const columns = useMemo(
@@ -316,13 +321,13 @@ function MembersPage() {
         key: '',
         title: '#',
         dataKey: '',
-        width: 180,
+        width: 200,
         sortable: false,
         headerClassName: 'justify-center',
         frozen: width > 767 ? 'right' : false,
         cellRenderer: ({ rowData }) => (
           <div className='flex justify-center w-full'>
-            {rowData?.FActive !== 1 && (
+            {kich_hoat?.hasRight && rowData?.FActive !== 1 && (
               <>
                 {Packages && Packages?.data?.length > 1 && (
                   <Popover>
@@ -366,20 +371,22 @@ function MembersPage() {
                   ))}
               </>
             )}
-            <button
-              type='button'
-              className='bg-success hover:bg-successhv text-white mx-[2px] rounded cursor-pointer px-3 py-3 transition text-[14px] flex items-center'
-              onClick={() => onResetPassword(rowData)}
-            >
-              <LockClosedIcon className='w-6' />
-            </button>
+            {reset_mat_khau?.hasRight && (
+              <button
+                type='button'
+                className='bg-success hover:bg-successhv text-white mx-[2px] rounded cursor-pointer px-3 py-3 transition text-[14px] flex items-center'
+                onClick={() => onResetPassword(rowData)}
+              >
+                <LockClosedIcon className='w-6' />
+              </button>
+            )}
           </div>
         ),
-        hidden: !adminTools?.hasRight
+        hidden: !kich_hoat?.hasRight && !reset_mat_khau?.hasRight
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [Packages, width, adminTools]
+    [Packages, width, kich_hoat, reset_mat_khau]
   )
 
   return (

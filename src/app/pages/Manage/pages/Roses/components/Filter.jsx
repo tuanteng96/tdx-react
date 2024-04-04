@@ -6,6 +6,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Button } from 'src/app/_ezs/partials/button'
 import { Controller, useForm } from 'react-hook-form'
 import { InputDatePicker } from 'src/app/_ezs/partials/forms/input/InputDatePicker'
+import { SelectAsyncMembers } from 'src/app/_ezs/partials/select'
 
 function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
   const { control, handleSubmit, reset } = useForm({
@@ -37,10 +38,7 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
                   animate={{ opacity: 1, top: 'auto' }}
                   exit={{ opacity: 0, top: '60%' }}
                 >
-                  <Dialog.Panel
-                    tabIndex={0}
-                    className='bg-white max-w-full max-h-full flex flex-col rounded shadow-lg'
-                  >
+                  <Dialog.Panel tabIndex={0} className='bg-white max-w-full max-h-full flex flex-col rounded shadow-lg'>
                     <Dialog.Title className='relative flex justify-between px-5 py-5 border-b border-light'>
                       <div className='text-2xl font-bold'>Bộ lọc đơn hàng</div>
                       <div
@@ -51,6 +49,24 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
                       </div>
                     </Dialog.Title>
                     <div className='p-5 overflow-auto grow'>
+                      <div className='mb-4'>
+                        <div>Khách hàng</div>
+                        <div className='mt-1'>
+                          <Controller
+                            name='MemberID'
+                            control={control}
+                            render={({ field: { ref, ...field }, fieldState }) => (
+                              <SelectAsyncMembers
+                                isClearable
+                                className='select-control'
+                                value={field.value}
+                                onChange={(val) => field.onChange(val)}
+                                placeholderText="Nhập tên khách hàng"
+                              />
+                            )}
+                          />
+                        </div>
+                      </div>
                       <div className='mb-4'>
                         <div>Từ ngày</div>
                         <div className='mt-1'>

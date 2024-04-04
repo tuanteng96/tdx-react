@@ -72,7 +72,8 @@ function PickerWallet({ children, rowData, data }) {
                                   <div className='text-[#6c7293] text-[14px] mb-px'>
                                     {moment(item.CreateDate).format('HH:mm DD-MM-YYYY')}
                                   </div>
-                                  <div className='font-medium'>{formatString.formatTypeWallet(item)}</div>
+                                  {/* <div className='font-medium'>{formatString.formatTypeWallet(item)}</div> */}
+                                  <div className='font-medium'>{item.Desc}</div>
                                 </div>
                                 <div className='w-[120px] flex flex-col items-end justify-between'>
                                   {item.Value < 0 && (
@@ -92,6 +93,7 @@ function PickerWallet({ children, rowData, data }) {
                                 </div>
                               </div>
                             ))}
+                        {(!data || data.length === 0) && <div className='p-5 font-medium'>Không có dữ liệu</div>}
                       </div>
                       <div className='flex items-center justify-end p-5 border-t border-light'>
                         <button
