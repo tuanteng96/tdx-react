@@ -30,6 +30,10 @@ const RenderFooter = forwardRef((props, ref) => {
       <div className='w-[160px] min-w-[160px] border-r border-r-[#eee] flex items-center font-bold px-3.5 text-success'>
         {formatString.formatVND(data?.TONG_THU)}
       </div>
+      <div className='w-[550px] min-w-[550px] border-r border-r-[#eee] flex items-center px-3.5'>
+        Tồn quỹ đến hiện tại :
+        <span className='text-primary font-bold pl-2'>{formatString.formatVND(data?.ton_quy)}</span>
+      </div>
     </div>
   )
 })
@@ -47,7 +51,8 @@ function RosesPage() {
     StockID: '',
     TagsTC: '',
     TypeTC: '',
-    MemberID: ''
+    MemberID: '',
+    TypePayment: ''
   })
 
   const { width } = useWindowSize()
@@ -62,7 +67,8 @@ function RosesPage() {
         Ps: filters.ps,
         DateStart: filters.DateStart ? moment(filters.DateStart).format('DD/MM/YYYY') : '',
         DateEnd: filters.DateEnd ? moment(filters.DateEnd).format('DD/MM/YYYY') : '',
-        MemberID: filters.MemberID ? filters.MemberID.value : ''
+        MemberID: filters.MemberID ? filters.MemberID.value : '',
+        TypePayment: filters.TypePayment?.value || ''
       })
       return data?.result
     },
@@ -136,7 +142,7 @@ function RosesPage() {
         ),
         width: 250,
         sortable: false
-      },
+      }
       // {
       //   key: 'Member.MobilePhone',
       //   title: 'Số điện thoại',

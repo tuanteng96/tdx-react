@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { AnimatePresence, LayoutGroup, m } from 'framer-motion'
 import { FloatingPortal } from '@floating-ui/react'
 import { Dialog } from '@headlessui/react'
@@ -6,7 +6,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Button } from 'src/app/_ezs/partials/button'
 import { Controller, useForm } from 'react-hook-form'
 import { Input } from 'src/app/_ezs/partials/forms'
-import { SelectDistrict, SelectProvince, SelectWard } from 'src/app/_ezs/partials/select'
+import { SelectAsyncMembers, SelectDistrict, SelectProvince, SelectWard } from 'src/app/_ezs/partials/select'
 import Select from 'react-select'
 import { InputDatePicker } from 'src/app/_ezs/partials/forms/input/InputDatePicker'
 
@@ -17,8 +17,13 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
     }
   })
 
-  let { ProvinceID, DistrictID } = watch()
+  useEffect(() => {
+    reset(initialValues)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialValues])
 
+  let { ProvinceID, DistrictID } = watch()
+  
   return (
     <AnimatePresence>
       {visible && (
@@ -166,6 +171,25 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
                                 value={field.value}
                                 onChange={(val) => field.onChange(val)}
                               />
+                            )}
+                          />
+                        </div>
+                      </div>
+                      <div className='mb-4'>
+                        <div>Cấp trên trực tiếp</div>
+                        <div className='mt-1'>
+                          <Controller
+                            name='fpid'
+                            control={control}
+                            render={({ field: { ref, ...field }, fieldState }) => (
+                              <>
+                                <SelectAsyncMembers
+                                  isClearable
+                                  className='select-control'
+                                  value={field.value}
+                                  onChange={(val) => field.onChange(val)}
+                                />
+                              </>
                             )}
                           />
                         </div>

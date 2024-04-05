@@ -30,7 +30,8 @@ function MembersPage() {
     WardID: '',
     FActive: '',
     from: '',
-    to: ''
+    to: '',
+    fpid: ''
   })
 
   const { width } = useWindowSize()
@@ -62,11 +63,12 @@ function MembersPage() {
         WardID: filters?.WardID ? filters?.WardID?.value : '',
         FActive: filters?.FActive ? filters?.FActive?.value : '',
         from: filters.from ? moment(filters.from).format('YYYY-MM-DD') : '',
-        to: filters.to ? moment(filters.to).format('YYYY-MM-DD') : ''
+        to: filters.to ? moment(filters.to).format('YYYY-MM-DD') : '',
+        fpid: filters.fpid?.value || ''
       })
     },
     keepPreviousData: true,
-    onSuccess: ({data}) => {
+    onSuccess: ({ data }) => {
       setTotal((prevState) => ({
         ...prevState,
         Members: data.total
@@ -316,6 +318,43 @@ function MembersPage() {
           cursor: 'pointer',
           padding: 0
         }
+      },
+      {
+        key: 'Parent',
+        title: 'Cấp trên trực tiếp',
+        dataKey: 'Parent',
+        cellRenderer: ({ rowData }) => (
+          <div>
+            <div>{rowData?.Parent?.FullName}</div>
+            <div>{rowData?.Parent?.MobilePhone}</div>
+          </div>
+        ),
+        width: 200,
+        sortable: false
+      },
+      {
+        key: 'f1',
+        title: '',
+        dataKey: 'f1',
+        cellRenderer: ({ rowData }) => (
+          <button
+            className='bg-primary hover:bg-primaryhv text-white mx-[2px] rounded cursor-pointer px-4 py-3 transition text-[14px] flex items-center'
+            type='button'
+            onClick={() =>
+              setFilters((prevState) => ({
+                ...prevState,
+                fpid: {
+                  value: rowData.ID,
+                  label: rowData.FullName
+                }
+              }))
+            }
+          >
+            F1 trực tiếp
+          </button>
+        ),
+        width: 135,
+        sortable: false
       },
       {
         key: '',

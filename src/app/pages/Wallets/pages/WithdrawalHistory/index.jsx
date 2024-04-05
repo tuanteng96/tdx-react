@@ -24,7 +24,7 @@ function WithdrawalHistoryPage(props) {
   const navigate = useNavigate()
   const { width } = useWindowSize()
   const { auth } = useAuth()
-  
+
   const queryConfig = {
     pi: queryParams.pi || 1,
     ps: queryParams.ps || 15,
@@ -46,7 +46,10 @@ function WithdrawalHistoryPage(props) {
         to: queryConfig.to ? moment(queryConfig.to).format('YYYY-MM-DD') : '' //2023-06-30
       }
       let { data } = await WalletsAPI.list(newQueryConfig)
-      return data?.lst || []
+      return {
+        lst: data?.lst || [],
+        sum: data?.sum ? data?.sum[0] : null
+      }
     },
     keepPreviousData: true
   })
@@ -208,9 +211,26 @@ function WithdrawalHistoryPage(props) {
     <div className='h-full flex'>
       <Sidebar defaultValues={queryConfig} />
       <div className='flex-1 flex flex-col h-full p-4'>
-        <div className='flex items-center justify-between mb-4'>
+        <div className='flex items-center justify-between mb-4 flex-col md:flex-row'>
           <div className='text-2xl font-bold'>Danh sách rút tiền</div>
-          <div className='flex'>
+          <div className='flex items-center'>
+            <div>
+              Tổng : <span className='text-primary font-medium'>{formatString.formatVND(data?.sum['TONG'] || 0)}</span>
+            </div>
+            <div className='h-[12px] w-[1px] bg-black mx-3'></div>
+            <div>
+              Hoàn thành :
+              <span className='text-success font-medium pl-1'>
+                {formatString.formatVND(data?.sum['HOAN_THANH'] || 0)}
+              </span>
+            </div>
+            <div className='h-[12px] w-[1px] bg-black mx-3'></div>
+            <div>
+              Chưa hoàn thành :
+              <span className='text-warning font-medium pl-1'>
+                {formatString.formatVND(data?.sum['KO_HOAN_THANH'] || 0)}
+              </span>
+            </div>
             {/* <PickerFilters defaultValues={queryConfig}>
               {({ open }) => (
                 <button
@@ -242,7 +262,7 @@ function WithdrawalHistoryPage(props) {
           wrapClassName='grow'
           rowKey='ID'
           columns={columns}
-          data={data || []}
+          data={data?.lst || []}
           estimatedRowHeight={96}
           isPreviousData={isPreviousData}
           loading={isLoading || isPreviousData}

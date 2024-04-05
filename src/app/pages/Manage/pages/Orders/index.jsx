@@ -73,7 +73,7 @@ const TransportSelect = ({ List, rowData, refetch }) => {
 
 function OrdersPage() {
   const { duyet_don } = useRoles(['duyet_don'])
-  const { open, onHide } = useManage()
+  const { open, onHide, setTotal } = useManage()
 
   const queryParams = useQueryParams()
 
@@ -100,7 +100,13 @@ function OrdersPage() {
         to: filters.to ? moment(filters.to).format('YYYY-MM-DD') : ''
       })
     },
-    keepPreviousData: true
+    keepPreviousData: true,
+    onSuccess: ({ data }) => {
+      setTotal((prevState) => ({
+        ...prevState,
+        Orders: data.total
+      }))
+    }
   })
 
   const Transport = useQuery({
@@ -216,6 +222,23 @@ function OrdersPage() {
         width: 160,
         sortable: false
       },
+      {
+        key: 'TotalFMoney',
+        title: 'Hoa hồng',
+        dataKey: 'TotalFMoney',
+        cellRenderer: ({ rowData }) => formatString.formatVND(rowData?.TotalFMoney),
+        width: 160,
+        sortable: false
+      },
+      {
+        key: 'thucthu-DIEM-TIEN',
+        title: 'Thực thu',
+        dataKey: 'thucthu-DIEM-TIEN',
+        cellRenderer: ({ rowData }) =>
+          formatString.formatVND(rowData?.ToPay - rowData?.DIEM - rowData?.TIEN - rowData?.TotalFMoney),
+        width: 160,
+        sortable: false
+      },
       // {
       //   key: 'RemainPay',
       //   title: 'Nợ',
@@ -231,6 +254,14 @@ function OrdersPage() {
         cellRenderer: ({ rowData }) => (
           <TransportSelect rowData={rowData} List={Transport?.data || []} refetch={refetch} />
         ),
+        width: 300,
+        sortable: false
+      },
+      {
+        key: 'Items',
+        title: 'Sản phẩm',
+        dataKey: 'Items',
+        cellRenderer: ({ rowData }) => rowData.Items && rowData.Items.map((x) => `${x.ProdTitle} (SL x${x.Qty})`).join(', '),
         width: 300,
         sortable: false
       },

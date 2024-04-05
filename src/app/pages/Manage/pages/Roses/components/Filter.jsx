@@ -7,6 +7,7 @@ import { Button } from 'src/app/_ezs/partials/button'
 import { Controller, useForm } from 'react-hook-form'
 import { InputDatePicker } from 'src/app/_ezs/partials/forms/input/InputDatePicker'
 import { SelectAsyncMembers } from 'src/app/_ezs/partials/select'
+import Select from 'react-select'
 
 function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
   const { control, handleSubmit, reset } = useForm({
@@ -61,7 +62,7 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
                                 className='select-control'
                                 value={field.value}
                                 onChange={(val) => field.onChange(val)}
-                                placeholderText="Nhập tên khách hàng"
+                                placeholderText='Nhập tên khách hàng'
                               />
                             )}
                           />
@@ -86,7 +87,7 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
                           />
                         </div>
                       </div>
-                      <div>
+                      <div className='mb-4'>
                         <div>Đến ngày</div>
                         <div className='mt-1'>
                           <Controller
@@ -100,6 +101,43 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset }) {
                                 selected={field.value ? new Date(field.value) : null}
                                 {...field}
                                 dateFormat='dd/MM/yyyy'
+                              />
+                            )}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <div>Loại</div>
+                        <div className='mt-1'>
+                          <Controller
+                            name='TypePayment'
+                            control={control}
+                            render={({ field: { ref, ...field }, fieldState }) => (
+                              <Select
+                                isClearable
+                                className='select-control'
+                                classNamePrefix='select'
+                                options={[
+                                  {
+                                    label: 'Mở ID',
+                                    value: 'id'
+                                  },
+                                  {
+                                    label: 'Mua hàng',
+                                    value: 'order'
+                                  }
+                                ]}
+                                placeholder='Chọn loại'
+                                value={field.value}
+                                onChange={(val) => field.onChange(val)}
+                                menuPortalTarget={document.body}
+                                menuPosition='fixed'
+                                styles={{
+                                  menuPortal: (base) => ({
+                                    ...base,
+                                    zIndex: 9999
+                                  })
+                                }}
                               />
                             )}
                           />

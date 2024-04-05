@@ -5,7 +5,6 @@ import { createSearchParams, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from 'src/app/_ezs/partials/button'
 import { InputDatePicker } from 'src/app/_ezs/partials/forms/input/InputDatePicker'
 import { SelectMembers, SelectStatusWallet } from 'src/app/_ezs/partials/select'
-import { Checkbox } from 'src/app/_ezs/partials/forms'
 
 function Sidebar({ defaultValues }) {
   const { pathname } = useLocation()

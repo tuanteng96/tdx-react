@@ -25,6 +25,8 @@ function ManageLayout() {
     'quan_ly_tien'
   ])
 
+  
+
   return (
     <ManageContext.Provider value={{ open, onHide, setTotal }}>
       <div className='h-full flex flex-col'>
@@ -40,7 +42,7 @@ function ManageLayout() {
                 }
                 to='khach-hang'
               >
-                Khách hàng{' '}
+                Khách hàng
                 {total.Members > 0 && (
                   <span className='bg-danger text-white text-[10px] px-1 rounded ml-1'>{total.Members}</span>
                 )}
@@ -58,6 +60,9 @@ function ManageLayout() {
                 to='don-hang'
               >
                 Đơn hàng
+                {total.Orders > 0 && (
+                  <span className='bg-danger text-white text-[10px] px-1 rounded ml-1'>{total.Orders}</span>
+                )}
               </NavLink>
             )}
 
