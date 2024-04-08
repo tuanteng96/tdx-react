@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react'
 import { LayoutSplashScreen } from './EzsSplashScreen'
+import { loadResource } from './SpreadJSExcel'
 
 const AuthContext = createContext()
 
@@ -325,6 +326,8 @@ const AuthInit = ({ children }) => {
       setShowSplashScreen(false)
       saveAuth(Auth)
     })
+
+    loadResource().then(() => {})
     // eslint-disable-next-line
   }, [])
 

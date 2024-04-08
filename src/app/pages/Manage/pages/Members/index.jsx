@@ -16,6 +16,7 @@ import PickerPoint from './components/PickerPoint'
 import { useWindowSize } from '@uidotdev/usehooks'
 import { LockClosedIcon } from '@heroicons/react/24/outline'
 import { useRoles } from 'src/app/_ezs/hooks/useRoles'
+import { dataToExcel } from 'src/app/_ezs/core/SpreadJSExcel'
 
 function MembersPage() {
   const { kich_hoat, duyet_don, reset_mat_khau } = useRoles(['kich_hoat', 'duyet_don', 'reset_mat_khau'])
@@ -82,6 +83,10 @@ function MembersPage() {
 
   const resetPwdMutation = useMutation({
     mutationFn: (body) => ManageAPI.resetPwdMember(body)
+  })
+
+  const excelMutation = useMutation({
+    mutationFn: (body) => ManageAPI.getMembers(body)
   })
 
   const onChangeActived = ({ Mid, Value }) => {
@@ -169,6 +174,113 @@ function MembersPage() {
         })
       }
     })
+  }
+
+  const onExport = (values) => {
+    if (!data?.data?.total) {
+      toast.error('Không thể xuất Excel do dữ liệu trống.')
+    } else {
+      excelMutation.mutate(
+        {
+          ...values,
+          ProvinceID: values?.ProvinceID ? values?.ProvinceID?.value : '',
+          DistrictID: values?.DistrictID ? values?.DistrictID?.value : '',
+          WardID: values?.WardID ? values?.WardID?.value : '',
+          FActive: values?.FActive ? values?.FActive?.value : '',
+          from: values.from ? moment(values.from).format('YYYY-MM-DD') : '',
+          to: values.to ? moment(values.to).format('YYYY-MM-DD') : '',
+          fpid: values.fpid?.value || '',
+          pi: 1,
+          ps: data?.data?.total
+        },
+        {
+          onSuccess: ({ data }) => {
+            if (data.lst && data.lst.length > 0) {
+              dataToExcel(`Báo cáo khách hàng`, (sheet, workbook) => {
+                workbook.suspendPaint()
+                workbook.suspendEvent()
+                let HeadTable = [
+                  'NGÀY TẠO',
+                  'ID',
+                  'HỌ TÊN',
+                  'SỐ ĐIỆN THOẠI',
+                  'ĐỊA CHỈ',
+                  'GIỚI TÍNH',
+                  'TRẠNG THÁI',
+                  'VÍ',
+                  'THẺ TIỀN',
+                  'ĐIỂM',
+                  'CẤP TRỰC TIẾP'
+                ]
+                var Response = [HeadTable]
+
+                for (let rowData of data.lst) {
+                  let newArr = [
+                    moment(rowData?.CreateDate).format('DD-MM-YYYY'),
+                    rowData.ID,
+                    rowData.FullName,
+                    rowData.MobilePhone,
+                    `${rowData.HomeAddress}, ${rowData?.WardTitle}, ${rowData?.DistrictTitle}, ${rowData?.ProvinceTitle}`,
+                    rowData.Gender === 1 ? 'Nam' : rowData.Gender === 0 ? 'Nữ' : 'Chưa xác định',
+                    rowData?.FActive === 1 ? 'Đã kích hoạt' : 'Chưa kích hoạt',
+                    rowData.MoneyKinds['Ví'] || 0,
+                    rowData.MoneyKinds['Kích hoạt tài khoản '] || 0,
+                    rowData.MoneyKinds['Tặng điểm'] || 0,
+                    `${rowData?.Parent?.FullName} - ${rowData?.Parent?.MobilePhone}`
+                  ]
+                  Response.push(newArr)
+                }
+
+                let TotalColumn = HeadTable.length
+                let TotalRow = Response.length
+
+                sheet.setArray(2, 0, Response)
+
+                //title
+                workbook.getActiveSheet().getCell(0, 0).value(`Danh sách khách hàng (${TotalRow} KH)`)
+                workbook.getActiveSheet().getCell(0, 0).font('18pt Arial')
+                workbook
+                workbook.getActiveSheet().getRange(2, 0, 1, TotalColumn).font('12pt Arial')
+                workbook.getActiveSheet().getRange(2, 0, 1, TotalColumn).backColor('#E7E9EB')
+                //border
+                var border = new window.GC.Spread.Sheets.LineBorder()
+                border.color = '#000'
+                border.style = window.GC.Spread.Sheets.LineStyle.thin
+                workbook.getActiveSheet().getRange(2, 0, TotalRow, TotalColumn).borderLeft(border)
+                workbook.getActiveSheet().getRange(2, 0, TotalRow, TotalColumn).borderRight(border)
+                workbook.getActiveSheet().getRange(2, 0, TotalRow, TotalColumn).borderBottom(border)
+                workbook.getActiveSheet().getRange(2, 0, TotalRow, TotalColumn).borderTop(border)
+                //filter
+                var cellrange = new window.GC.Spread.Sheets.Range(3, 0, 1, TotalColumn)
+                var hideRowFilter = new window.GC.Spread.Sheets.Filter.HideRowFilter(cellrange)
+                workbook.getActiveSheet().rowFilter(hideRowFilter)
+
+                //format number
+                workbook.getActiveSheet().getCell(2, 0).hAlign(window.GC.Spread.Sheets.HorizontalAlign.center)
+
+                //auto fit width and height
+                workbook.getActiveSheet().autoFitRow(TotalRow + 2)
+                workbook.getActiveSheet().autoFitRow(0)
+                for (let i = 1; i < TotalColumn; i++) {
+                  workbook.getActiveSheet().autoFitColumn(i)
+                }
+
+                for (let i = 1; i < TotalRow; i++) {
+                  workbook.getActiveSheet().setFormatter(i, 7, '#,#')
+                  workbook.getActiveSheet().setFormatter(i, 8, '#,#')
+                  workbook.getActiveSheet().setFormatter(i, 9, '#,#')
+                }
+
+                workbook.resumePaint()
+                workbook.resumeEvent()
+              })
+            } else {
+              toast.error('Không thể xuất Excel do dữ liệu trống hoặc lỗi')
+            }
+          }
+        }
+      )
+    }
   }
 
   const columns = useMemo(
@@ -466,6 +578,8 @@ function MembersPage() {
           setFilters({ pi: 1, ps: 20, key: '', frootid: 0 })
           onHide()
         }}
+        onExport={onExport}
+        loading={isLoading || excelMutation.isLoading}
       />
     </div>
   )
