@@ -1,4 +1,4 @@
-var sv = "https://cser.vn/admin/SpreadJSExcelIO/13/";
+var sv = import.meta.env.MODE === 'development' ? import.meta.env.VITE_HOST : window.location.origin + "/admin/SpreadJSExcelIO/13/";
 
 function loadResource() {
     return new Promise((rs) => {

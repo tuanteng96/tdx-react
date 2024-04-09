@@ -4,10 +4,8 @@ import { Dialog } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Button } from 'src/app/_ezs/partials/button'
 import { Controller, useForm } from 'react-hook-form'
-import { Input } from 'src/app/_ezs/partials/forms'
-import Select from 'react-select'
-import { SelectAsyncMembers } from 'src/app/_ezs/partials/select'
 import { InputDatePicker } from 'src/app/_ezs/partials/forms/input/InputDatePicker'
+import { SelectAsyncMembers } from 'src/app/_ezs/partials/select'
 
 function Filter({ visible, onHide, initialValues, onSubmit, onReset, onExport, loading }) {
   const { control, handleSubmit, reset, watch } = useForm({
@@ -41,7 +39,7 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset, onExport, l
                 >
                   <Dialog.Panel tabIndex={0} className='bg-white max-w-full max-h-full flex flex-col rounded shadow-lg'>
                     <Dialog.Title className='relative flex justify-between px-5 py-5 border-b border-light'>
-                      <div className='text-2xl font-bold'>Bộ lọc đơn hàng</div>
+                      <div className='text-2xl font-bold'>Bộ lọc</div>
                       <div
                         className='absolute flex items-center justify-center w-12 h-12 cursor-pointer right-2 top-2/4 -translate-y-2/4'
                         onClick={onHide}
@@ -50,24 +48,6 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset, onExport, l
                       </div>
                     </Dialog.Title>
                     <div className='p-5 overflow-auto grow'>
-                      <div className='mb-4'>
-                        <div>Từ khóa</div>
-                        <div className='mt-1'>
-                          <Controller
-                            name='key'
-                            control={control}
-                            render={({ field: { ref, ...field }, fieldState }) => (
-                              <Input
-                                placeholder='Họ tên, ID, Số điện thoại'
-                                value={field.value}
-                                onChange={field.onChange}
-                                errorMessageForce={fieldState?.invalid}
-                                errorMessage={fieldState?.error?.message}
-                              />
-                            )}
-                          />
-                        </div>
-                      </div>
                       <div className='mb-4'>
                         <div>Khách hàng</div>
                         <div className='mt-1'>
@@ -80,6 +60,7 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset, onExport, l
                                 className='select-control'
                                 value={field.value}
                                 onChange={(val) => field.onChange(val)}
+                                placeholderText='Nhập tên khách hàng'
                               />
                             )}
                           />
@@ -104,7 +85,7 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset, onExport, l
                           />
                         </div>
                       </div>
-                      <div className='mb-4'>
+                      <div>
                         <div>Đến ngày</div>
                         <div className='mt-1'>
                           <Controller
@@ -118,47 +99,6 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset, onExport, l
                                 selected={field.value ? new Date(field.value) : null}
                                 {...field}
                                 dateFormat='dd/MM/yyyy'
-                              />
-                            )}
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <div>Trạng thái</div>
-                        <div className='mt-1'>
-                          <Controller
-                            name='status'
-                            control={control}
-                            render={({ field: { ref, ...field }, fieldState }) => (
-                              <Select
-                                isClearable
-                                className='select-control'
-                                classNamePrefix='select'
-                                options={[
-                                  {
-                                    label: 'Hoàn thành',
-                                    value: 'finish'
-                                  },
-                                  {
-                                    label: 'Đang xử lý',
-                                    value: 'user_sent'
-                                  },
-                                  {
-                                    label: 'Hủy',
-                                    value: 'cancel'
-                                  }
-                                ]}
-                                placeholder='Chọn trạng thái'
-                                value={field.value}
-                                onChange={(val) => field.onChange(val)}
-                                menuPortalTarget={document.body}
-                                menuPosition='fixed'
-                                styles={{
-                                  menuPortal: (base) => ({
-                                    ...base,
-                                    zIndex: 9999
-                                  })
-                                }}
                               />
                             )}
                           />
@@ -216,7 +156,7 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset, onExport, l
                           type='submit'
                           className='relative flex items-center h-12 px-5 ml-2 text-white transition rounded shadow-lg bg-primary hover:bg-primaryhv focus:outline-none focus:shadow-none disabled:opacity-70'
                         >
-                          <span className='truncate'>Thực hiện</span>
+                          <span>Thực hiện</span>
                         </Button>
                       </div>
                     </div>

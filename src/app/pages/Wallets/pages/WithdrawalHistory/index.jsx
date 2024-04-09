@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import Sidebar from '../../components/Sidebar'
 import useQueryParams from 'src/app/_ezs/hooks/useQueryParams'
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/outline'
@@ -16,6 +16,7 @@ import { toAbsolutePath } from 'src/app/_ezs/utils/assetPath'
 import { useRoles } from 'src/app/_ezs/hooks/useRoles'
 import { useAuth } from 'src/app/_ezs/core/Auth'
 import { useWindowSize } from '@uidotdev/usehooks'
+import { dataToExcel } from 'src/app/_ezs/core/SpreadJSExcel'
 
 function WithdrawalHistoryPage(props) {
   const { duyet_xoa_rut_tien } = useRoles(['duyet_xoa_rut_tien'])
@@ -24,6 +25,8 @@ function WithdrawalHistoryPage(props) {
   const navigate = useNavigate()
   const { width } = useWindowSize()
   const { auth } = useAuth()
+
+  const [isFilter, setIsFilter] = useState(false)
 
   const queryConfig = {
     pi: queryParams.pi || 1,
@@ -48,14 +51,22 @@ function WithdrawalHistoryPage(props) {
       let { data } = await WalletsAPI.list(newQueryConfig)
       return {
         lst: data?.lst || [],
-        sum: data?.sum ? data?.sum[0] : null
+        sum: data?.sum ? data?.sum[0] : null,
+        total: data?.total || 0
       }
     },
-    keepPreviousData: true
+    keepPreviousData: true,
+    onSuccess: () => {
+      setIsFilter(false)
+    }
   })
 
   const deleteMutation = useMutation({
     mutationFn: (body) => WalletsAPI.deleteIdHistory(body)
+  })
+
+  const excelMutation = useMutation({
+    mutationFn: (body) => WalletsAPI.list(body)
   })
 
   const onDelete = (item) => {
@@ -86,6 +97,127 @@ function WithdrawalHistoryPage(props) {
         toast.success('Xóa thành công.')
       }
     })
+  }
+
+  const onExport = () => {
+    if (data?.total) {
+      excelMutation.mutate(
+        {
+          ...queryConfig,
+          from: queryConfig.from ? moment(queryConfig.from).format('YYYY-MM-DD') : '',
+          to: queryConfig.to ? moment(queryConfig.to).format('YYYY-MM-DD') : '',
+          pi: 1,
+          ps: data?.total
+        },
+        {
+          onSuccess: ({ data }) => {
+            if (data.lst && data.lst.length > 0) {
+              dataToExcel(`Báo cáo rút tiền`, (sheet, workbook) => {
+                workbook.suspendPaint()
+                workbook.suspendEvent()
+                let HeadTable = [
+                  'NGÀY TẠO',
+                  'HỌ TÊN',
+                  'SỐ ĐIỆN THOẠI',
+                  'SỐ TIỀN',
+                  'THÔNG TIN SỐ TÀI KHOẢN',
+                  'TRẠNG THÁI',
+                  'ẢNH HÓA ĐƠN'
+                ]
+                var Response = [HeadTable]
+
+                for (let rowData of data.lst) {
+                  let newArr = [
+                    moment(rowData?.CreateDate).format('DD-MM-YYYY'),
+                    rowData.MemberPhone,
+                    rowData.MemberPhone,
+                    rowData.Value,
+                    [
+                      `Số tài khoản : ${JSON.parse(rowData.Member.BankInfo).STK}`,
+                      `Chủ tài khoản : ${JSON.parse(rowData.Member.BankInfo).CTK}`,
+                      `Ngân hàng : ${JSON.parse(rowData.Member.BankInfo).NH}`
+                    ].join('\n'),
+                    rowData?.Status === 'HOAN_THANH' ? 'Hoàn thành' : 'Đang chờ',
+                    rowData?.BillSrc ? toAbsolutePath(rowData?.BillSrc) : ''
+                  ]
+
+                  Response.push(newArr)
+                }
+
+                let TotalColumn = HeadTable.length
+                let TotalRow = Response.length
+
+                sheet.setArray(2, 0, Response)
+                //title
+                workbook
+                  .getActiveSheet()
+                  .getCell(0, 0)
+                  .value(
+                    `Danh sách rút tiền (${data?.total}) | Tổng : ${formatString.formatVND(
+                      data?.sum[0]['TONG'] || 0
+                    )} | Hoàn thành : ${formatString.formatVND(
+                      data?.sum[0]['HOAN_THANH'] || 0
+                    )} | Chưa hoàn thành : ${formatString.formatVND(data?.sum[0]['DANG_CHO'] || 0)}`
+                  )
+                workbook.getActiveSheet().getCell(0, 0).font('18pt Arial')
+                workbook
+                workbook.getActiveSheet().getRange(2, 0, 1, TotalColumn).font('12pt Arial')
+                workbook.getActiveSheet().getRange(2, 0, 1, TotalColumn).backColor('#E7E9EB')
+                //border
+                var border = new window.GC.Spread.Sheets.LineBorder()
+                border.color = '#000'
+                border.style = window.GC.Spread.Sheets.LineStyle.thin
+                workbook.getActiveSheet().getRange(2, 0, TotalRow, TotalColumn).borderLeft(border)
+                workbook.getActiveSheet().getRange(2, 0, TotalRow, TotalColumn).borderRight(border)
+                workbook.getActiveSheet().getRange(2, 0, TotalRow, TotalColumn).borderBottom(border)
+                workbook.getActiveSheet().getRange(2, 0, TotalRow, TotalColumn).borderTop(border)
+                //filter
+                var cellrange = new window.GC.Spread.Sheets.Range(3, 0, 1, TotalColumn)
+                var hideRowFilter = new window.GC.Spread.Sheets.Filter.HideRowFilter(cellrange)
+                workbook.getActiveSheet().rowFilter(hideRowFilter)
+
+                //format number
+                workbook.getActiveSheet().getCell(2, 0).hAlign(window.GC.Spread.Sheets.HorizontalAlign.center)
+
+                //auto fit width and height
+                workbook.getActiveSheet().autoFitRow(TotalRow + 2)
+                workbook.getActiveSheet().autoFitRow(0)
+                for (let i = 1; i < TotalColumn; i++) {
+                  workbook.getActiveSheet().autoFitColumn(i)
+                }
+
+                for (let i = 1; i < TotalRow + 2; i++) {
+                  workbook.getActiveSheet().setFormatter(i, 3, '#,#')
+
+                  sheet.getRange(i, 4, 1, 1).wordWrap(true)
+                  sheet.autoFitRow(i)
+                }
+
+                for (let i = 1; i < TotalRow; i++) {
+                  if (Response[i][Response[i].length - 1]) {
+                    sheet.setValue(i + 2, 6, 'Xem ảnh hóa đơn')
+                    sheet.setHyperlink(i + 2, 6, {
+                      url: Response[i][Response[i].length - 1],
+                      tooltip: 'Ảnh hóa đơn',
+                      linkColor: '#0066cc',
+                      visitedLinkColor: '#3399ff',
+                      drawUnderline: false
+                    })
+                  }
+                }
+
+                workbook.resumePaint()
+                workbook.resumeEvent()
+              })
+            } else {
+              toast.error('Không thể xuất Excel do dữ liệu trống hoặc lỗi')
+            }
+          }
+        }
+      )
+    } else {
+      toast.error('Không thể xuất Excel do dữ liệu trống hoặc lỗi')
+    }
   }
 
   const columns = useMemo(
@@ -209,11 +341,26 @@ function WithdrawalHistoryPage(props) {
 
   return (
     <div className='h-full flex'>
-      <Sidebar defaultValues={queryConfig} />
+      <Sidebar
+        defaultValues={queryConfig}
+        onExport={onExport}
+        loading={isLoading || excelMutation.isLoading}
+        isFilter={isFilter}
+        onHide={() => setIsFilter(false)}
+      />
       <div className='flex-1 flex flex-col h-full p-4'>
-        <div className='flex items-center justify-between mb-4 flex-col md:flex-row'>
-          <div className='text-2xl font-bold'>Danh sách rút tiền</div>
-          <div className='flex items-center'>
+        <div className='flex md:items-center justify-between mb-4 flex-col md:flex-row'>
+          <div className='flex justify-between items-center mb-3 md:mb-0'>
+            <div className='text-2xl font-bold'>Danh sách rút tiền</div>
+            <button
+              type='button'
+              className='block px-3 rounded pt-3 pb-2.5 bg-white transition-all hover:bg-primary hover:text-white border md:hidden'
+              onClick={() => setIsFilter(!isFilter)}
+            >
+              <AdjustmentsVerticalIcon className='w-6' />
+            </button>
+          </div>
+          <div className='flex items-center text-[13px]'>
             <div>
               Tổng : <span className='text-primary font-medium'>{formatString.formatVND(data?.sum['TONG'] || 0)}</span>
             </div>
@@ -228,33 +375,9 @@ function WithdrawalHistoryPage(props) {
             <div>
               Chưa hoàn thành :
               <span className='text-warning font-medium pl-1'>
-                {formatString.formatVND(data?.sum['KO_HOAN_THANH'] || 0)}
+                {formatString.formatVND(data?.sum['DANG_CHO'] || 0)}
               </span>
             </div>
-            {/* <PickerFilters defaultValues={queryConfig}>
-              {({ open }) => (
-                <button
-                  onClick={open}
-                  type='button'
-                  className='border rounded transition hover:border-black bg-white border-[#d5d7da] h-12 flex items-center justify-center px-3 lg:hidden'
-                >
-                  <span className='hidden md:inline-block pr-1.5'>Bộ lọc</span>
-                  <AdjustmentsVerticalIcon className='w-6' />
-                </button>
-              )}
-            </PickerFilters> */}
-
-            {/* <PickerMember>
-              {({ open }) => (
-                <button
-                  onClick={open}
-                  type='button'
-                  className='flex items-center justify-center h-12 px-5 ml-2 text-white transition border rounded bg-primary border-primary hover:bg-primaryhv hover:border-primaryhv'
-                >
-                  Thêm mới
-                </button>
-              )}
-            </PickerMember> */}
           </div>
         </div>
         <ReactBaseTable

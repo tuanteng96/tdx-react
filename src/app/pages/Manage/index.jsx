@@ -1,4 +1,4 @@
-import React, { lazy } from 'react'
+import { lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import SuspensedView from 'src/app/routing/SuspensedView'
 import { ManageLayout } from './ManageLayout'
@@ -8,6 +8,8 @@ import { useRoles } from 'src/app/_ezs/hooks/useRoles'
 const MembersPage = lazy(() => import('./pages/Members'))
 const OrdersPage = lazy(() => import('./pages/Orders'))
 const RosesPage = lazy(() => import('./pages/Roses'))
+const SyntheticPage = lazy(() => import('./pages/Synthetic'))
+const SalesChartPage = lazy(() => import('./pages/SalesChart'))
 
 function ManagePage(props) {
   const { quan_ly_khach_hang, quan_ly_don_hang, quan_ly_tien } = useRoles([
@@ -56,6 +58,22 @@ function ManagePage(props) {
             element={
               <SuspensedView>
                 <RosesPage />
+              </SuspensedView>
+            }
+          />
+          <Route
+            path='tong-hop'
+            element={
+              <SuspensedView>
+                <SyntheticPage />
+              </SuspensedView>
+            }
+          />
+          <Route
+            path='doanh-so'
+            element={
+              <SuspensedView>
+                <SalesChartPage />
               </SuspensedView>
             }
           />

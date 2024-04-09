@@ -1,7 +1,7 @@
 import { AdjustmentsVerticalIcon } from '@heroicons/react/24/outline'
 import clsx from 'clsx'
 import { createContext, useContext, useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useRoles } from 'src/app/_ezs/hooks/useRoles'
 
 const ManageContext = createContext()
@@ -25,7 +25,7 @@ function ManageLayout() {
     'quan_ly_tien'
   ])
 
-  
+  const { pathname } = useLocation()
 
   return (
     <ManageContext.Provider value={{ open, onHide, setTotal }}>
@@ -36,13 +36,14 @@ function ManageLayout() {
               <NavLink
                 className={({ isActive }) =>
                   clsx(
-                    'block px-4 rounded pt-3 pb-2.5 hover:text-primary hover:bg-[#f5f5f9] font-medium md:mr-2 text-[14px] transition-all',
+                    'block md:px-4 px-2 rounded pt-3 pb-2.5 hover:text-primary hover:bg-[#f5f5f9] font-medium md:mr-2 text-[13px] md:text-[14px] transition-all',
                     isActive ? 'bg-[#f5f5f9] text-primary' : 'text-[#6c7293]'
                   )
                 }
                 to='khach-hang'
               >
-                Khách hàng
+                <span className='hidden md:inline-block'>Khách hàng</span>
+                <span className='md:hidden'>K.Hàng</span>
                 {total.Members > 0 && (
                   <span className='bg-danger text-white text-[10px] px-1 rounded ml-1'>{total.Members}</span>
                 )}
@@ -53,13 +54,15 @@ function ManageLayout() {
               <NavLink
                 className={({ isActive }) =>
                   clsx(
-                    'block px-4 rounded pt-3 pb-2.5 hover:text-primary hover:bg-[#f5f5f9] font-medium md:mr-2 text-[14px] transition-all',
+                    'block md:px-4 px-2 rounded pt-3 pb-2.5 hover:text-primary hover:bg-[#f5f5f9] font-medium md:mr-2 text-[13px] md:text-[14px] transition-all',
                     isActive ? 'bg-[#f5f5f9] text-primary' : 'text-[#6c7293]'
                   )
                 }
                 to='don-hang'
               >
-                Đơn hàng
+                <span className='hidden md:inline-block'>Đơn hàng</span>
+                <span className='md:hidden'>Đ.Hàng</span>
+
                 {total.Orders > 0 && (
                   <span className='bg-danger text-white text-[10px] px-1 rounded ml-1'>{total.Orders}</span>
                 )}
@@ -70,7 +73,7 @@ function ManageLayout() {
               <NavLink
                 className={({ isActive }) =>
                   clsx(
-                    'block px-4 rounded pt-3 pb-2.5 hover:text-primary hover:bg-[#f5f5f9] font-medium md:mr-2 text-[14px] transition-all',
+                    'block md:px-4 px-2 rounded pt-3 pb-2.5 hover:text-primary hover:bg-[#f5f5f9] font-medium md:mr-2 text-[13px] md:text-[14px] transition-all',
                     isActive ? 'bg-[#f5f5f9] text-primary' : 'text-[#6c7293]'
                   )
                 }
@@ -79,16 +82,52 @@ function ManageLayout() {
                 Tiền
               </NavLink>
             )}
+            {quan_ly_khach_hang?.hasRight && (
+              <NavLink
+                className={({ isActive }) =>
+                  clsx(
+                    'block md:px-4 px-2 rounded pt-3 pb-2.5 hover:text-primary hover:bg-[#f5f5f9] font-medium md:mr-2 text-[13px] md:text-[14px] transition-all',
+                    isActive ? 'bg-[#f5f5f9] text-primary' : 'text-[#6c7293]'
+                  )
+                }
+                to='tong-hop'
+              >
+                <span className='hidden md:inline-block'>Tổng hợp</span>
+                <span className='md:hidden'>T.Hợp</span>
+                {/* {total.Members > 0 && (
+                  <span className='bg-danger text-white text-[10px] px-1 rounded ml-1'>{total.Members}</span>
+                )} */}
+              </NavLink>
+            )}
+            {quan_ly_don_hang?.hasRight && (
+              <NavLink
+                className={({ isActive }) =>
+                  clsx(
+                    'block md:px-4 px-2 rounded pt-3 pb-2.5 hover:text-primary hover:bg-[#f5f5f9] font-medium md:mr-2 text-[13px] md:text-[14px] transition-all',
+                    isActive ? 'bg-[#f5f5f9] text-primary' : 'text-[#6c7293]'
+                  )
+                }
+                to='doanh-so'
+              >
+                <span className='hidden md:inline-block'>Doanh số</span>
+                <span className='md:hidden'>D.Số</span>
+                {/* {total.Members > 0 && (
+                  <span className='bg-danger text-white text-[10px] px-1 rounded ml-1'>{total.Members}</span>
+                )} */}
+              </NavLink>
+            )}
           </div>
-          <div>
-            <button
-              type='button'
-              className='block px-3 rounded pt-3 pb-2.5 bg-[#F3F6F9] transition-all hover:bg-primary hover:text-white border'
-              onClick={() => setOpen(!open)}
-            >
-              <AdjustmentsVerticalIcon className='w-6' />
-            </button>
-          </div>
+          {pathname !== '/quan-ly/doanh-so' && (
+            <div>
+              <button
+                type='button'
+                className='block px-3 rounded pt-3 pb-2.5 bg-[#F3F6F9] transition-all hover:bg-primary hover:text-white border'
+                onClick={() => setOpen(!open)}
+              >
+                <AdjustmentsVerticalIcon className='w-6' />
+              </button>
+            </div>
+          )}
         </div>
         <div className='grow'>
           <Outlet />

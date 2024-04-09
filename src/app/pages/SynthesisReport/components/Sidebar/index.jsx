@@ -1,66 +1,45 @@
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import clsx from 'clsx'
-import { pickBy } from 'lodash-es'
 import moment from 'moment'
 import { Controller, useForm } from 'react-hook-form'
-import { createSearchParams, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from 'src/app/_ezs/partials/button'
 import { InputDatePicker } from 'src/app/_ezs/partials/forms/input/InputDatePicker'
-import { SelectMembers, SelectStatusWallet } from 'src/app/_ezs/partials/select'
+import { SelectMembers } from 'src/app/_ezs/partials/select'
 
-function Sidebar({ defaultValues, onExport, loading, onHide, isFilter }) {
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
-
+function Sidebar({ defaultValues, onExport, loading, onChange, onHide, isFilter }) {
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       ...defaultValues,
-      Status: defaultValues?.Status,
       from: defaultValues.from ? moment(defaultValues.from).toDate() : '',
       to: defaultValues.to ? moment(defaultValues.to).toDate() : '',
       MemberID: defaultValues.MemberID ? Number(defaultValues.MemberID) : ''
     }
   })
 
-  const onSubmit = async (values) => {
+  const onSubmit = (values) => {
     const newQueryConfig = {
       ...values,
       From: values.From ? moment(values.From).format('YYYY-MM-DD') : '',
       To: values.To ? moment(values.To).format('YYYY-MM-DD') : '',
       Status: values.Status,
       pi: 1,
-      ps: 15
+      ps: 20
     }
-    navigate({
-      pathname: pathname,
-      search: createSearchParams(pickBy(newQueryConfig, (v) => v)).toString()
-    })
+    onChange(newQueryConfig)
   }
 
   const onResetFilters = () => {
-    navigate({
-      pathname: pathname,
-      search: createSearchParams(
-        pickBy(
-          {
-            pi: 1,
-            ps: 15,
-            from: '',
-            to: '',
-            HasBill: false
-          },
-          (v) => v
-        )
-      ).toString()
+    onChange({
+      pi: 1,
+      ps: 20,
+      MemberID: '',
+      Include: false
     })
     reset({
       pi: 1,
-      ps: 15,
-      from: '',
-      to: '',
+      ps: 20,
       MemberID: '',
-      Status: '',
-      HasBill: false
+      Include: false
     })
   }
 
@@ -140,24 +119,24 @@ function Sidebar({ defaultValues, onExport, loading, onHide, isFilter }) {
               />
             </div>
           </div>
-          <div>
-            <div className='font-light'>Trạng thái</div>
-            <div className='mt-1'>
-              <Controller
-                name='Status'
-                control={control}
-                render={({ field: { ref, ...field }, fieldState }) => (
-                  <SelectStatusWallet
-                    isClearable
-                    className='select-control'
-                    placeholder='Chọn trạng thái'
-                    onChange={(val) => field.onChange(val ? val.value : '')}
-                    value={field.value}
-                  />
-                )}
-              />
-            </div>
+          {/* <div>
+          <div className='font-light'>Trạng thái</div>
+          <div className='mt-1'>
+            <Controller
+              name='Status'
+              control={control}
+              render={({ field: { ref, ...field }, fieldState }) => (
+                <SelectStatusWallet
+                  isClearable
+                  className='select-control'
+                  placeholder='Chọn trạng thái'
+                  onChange={(val) => field.onChange(val ? val.value : '')}
+                  value={field.value}
+                />
+              )}
+            />
           </div>
+        </div> */}
           {/* <div>
           <Controller
             name='HasBill'
@@ -211,6 +190,8 @@ function Sidebar({ defaultValues, onExport, loading, onHide, isFilter }) {
           <Button
             type='submit'
             className='relative flex items-center justify-center h-12 px-2 ml-2 text-white transition rounded shadow-lg bg-primary hover:bg-primaryhv focus:outline-none focus:shadow-none disabled:opacity-70 flex-1 truncate'
+            loading={loading}
+            hideText={loading}
           >
             Thực hiện
           </Button>

@@ -236,13 +236,11 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset, onExport, l
                       <div className='flex'>
                         <button
                           className='relative flex items-center h-12 px-5 transition border rounded border-light hover:border-success focus:outline-none cursor-pointer text-success disabled:opacity-50'
-                          onClick={() => {
-                            onExport(watch())
-                          }}
+                          onClick={onExport}
                           type='button'
                           disabled={loading}
                         >
-                          Xuất Excel
+                          <span className='truncate'>Xuất Excel</span>
                           {loading && (
                             <svg
                               aria-hidden='true'
@@ -264,19 +262,19 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset, onExport, l
                           )}
                         </button>
                         <div
-                          className='cursor-pointer text-info rounded h-12 px-5 flex items-center ml-2 border border-light'
+                          className='cursor-pointer text-info rounded h-12 px-5 flex items-center ml-2 border border-light truncate w-[90px] md:w-auto'
                           onClick={() => {
                             onReset()
                             reset()
                           }}
                         >
-                          Xóa bộ lọc
+                          <span className='truncate'>Xóa bộ lọc</span>
                         </div>
                       </div>
                       <div className='flex justify-end'>
                         <button
                           type='button'
-                          className='relative flex items-center h-12 px-5 transition border rounded shadow-lg border-light hover:border-gray-800 focus:outline-none focus:shadow-none'
+                          className='relative hidden md:flex items-center h-12 px-5 transition border rounded shadow-lg border-light hover:border-gray-800 focus:outline-none focus:shadow-none'
                           onClick={onHide}
                         >
                           Đóng
@@ -285,7 +283,7 @@ function Filter({ visible, onHide, initialValues, onSubmit, onReset, onExport, l
                           type='submit'
                           className='relative flex items-center h-12 px-5 ml-2 text-white transition rounded shadow-lg bg-primary hover:bg-primaryhv focus:outline-none focus:shadow-none disabled:opacity-70'
                         >
-                          Thực hiện
+                          <span className='truncate'>Thực hiện</span>
                         </Button>
                       </div>
                     </div>

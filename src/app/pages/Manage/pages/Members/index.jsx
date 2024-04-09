@@ -176,20 +176,18 @@ function MembersPage() {
     })
   }
 
-  const onExport = (values) => {
-    if (!data?.data?.total) {
-      toast.error('Không thể xuất Excel do dữ liệu trống.')
-    } else {
+  const onExport = () => {
+    if (data?.data?.total) {
       excelMutation.mutate(
         {
-          ...values,
-          ProvinceID: values?.ProvinceID ? values?.ProvinceID?.value : '',
-          DistrictID: values?.DistrictID ? values?.DistrictID?.value : '',
-          WardID: values?.WardID ? values?.WardID?.value : '',
-          FActive: values?.FActive ? values?.FActive?.value : '',
-          from: values.from ? moment(values.from).format('YYYY-MM-DD') : '',
-          to: values.to ? moment(values.to).format('YYYY-MM-DD') : '',
-          fpid: values.fpid?.value || '',
+          ...filters,
+          ProvinceID: filters?.ProvinceID ? filters?.ProvinceID?.value : '',
+          DistrictID: filters?.DistrictID ? filters?.DistrictID?.value : '',
+          WardID: filters?.WardID ? filters?.WardID?.value : '',
+          FActive: filters?.FActive ? filters?.FActive?.value : '',
+          from: filters.from ? moment(filters.from).format('YYYY-MM-DD') : '',
+          to: filters.to ? moment(filters.to).format('YYYY-MM-DD') : '',
+          fpid: filters.fpid?.value || '',
           pi: 1,
           ps: data?.data?.total
         },
@@ -237,7 +235,7 @@ function MembersPage() {
                 sheet.setArray(2, 0, Response)
 
                 //title
-                workbook.getActiveSheet().getCell(0, 0).value(`Danh sách khách hàng (${TotalRow} KH)`)
+                workbook.getActiveSheet().getCell(0, 0).value(`Danh sách khách hàng (${data?.total} KH)`)
                 workbook.getActiveSheet().getCell(0, 0).font('18pt Arial')
                 workbook
                 workbook.getActiveSheet().getRange(2, 0, 1, TotalColumn).font('12pt Arial')
@@ -265,7 +263,7 @@ function MembersPage() {
                   workbook.getActiveSheet().autoFitColumn(i)
                 }
 
-                for (let i = 1; i < TotalRow; i++) {
+                for (let i = 1; i < TotalRow + 2; i++) {
                   workbook.getActiveSheet().setFormatter(i, 7, '#,#')
                   workbook.getActiveSheet().setFormatter(i, 8, '#,#')
                   workbook.getActiveSheet().setFormatter(i, 9, '#,#')
@@ -280,6 +278,8 @@ function MembersPage() {
           }
         }
       )
+    } else {
+      toast.error('Không thể xuất Excel do dữ liệu trống hoặc lỗi')
     }
   }
 

@@ -124,7 +124,7 @@ function ReactBaseTable({
       {pagination && (
         <div className='flex items-center justify-between w-full mt-4'>
           <div className='flex font-medium'>
-            Hiển thị
+            <span className='hidden md:block'>Hiển thị</span>
             <Menu as='div' className='relative'>
               <div>
                 <Menu.Button className='flex items-center px-2 font-semibold font-inter'>
@@ -165,7 +165,7 @@ function ReactBaseTable({
                 </Menu.Items>
               </Transition>
             </Menu>
-            trên trang
+            <span className='hidden md:block'>trên trang</span>
           </div>
           <div>
             <Pagination pageCount={pageCount} pageOffset={pageOffset} pageSizes={pageSizes} onChange={onChange} />

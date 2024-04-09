@@ -11,6 +11,8 @@ import Select from 'react-select'
 import ConfigAPI from 'src/app/_ezs/api/config.api'
 import { useRoles } from 'src/app/_ezs/hooks/useRoles'
 import useQueryParams from 'src/app/_ezs/hooks/useQueryParams'
+import { toast } from 'react-toastify'
+import { dataToExcel } from 'src/app/_ezs/core/SpreadJSExcel'
 
 const TransportSelect = ({ List, rowData, refetch }) => {
   let [value, setValue] = useState('')
@@ -126,6 +128,125 @@ function OrdersPage() {
       return newData
     }
   })
+
+  const excelMutation = useMutation({
+    mutationFn: (body) => ManageAPI.getOrders(body)
+  })
+
+  const onExport = () => {
+    if (data?.data?.total) {
+      excelMutation.mutate(
+        {
+          ...filters,
+          MemberID: filters?.MemberID ? filters?.MemberID?.value : '',
+          status: filters?.status ? filters?.status?.value : '',
+          from: filters.from ? moment(filters.from).format('YYYY-MM-DD') : '',
+          to: filters.to ? moment(filters.to).format('YYYY-MM-DD') : '',
+          pi: 1,
+          ps: data?.data?.total
+        },
+        {
+          onSuccess: ({ data }) => {
+            if (data.lst && data.lst.length > 0) {
+              dataToExcel(`Báo cáo đơn hàng`, (sheet, workbook) => {
+                workbook.suspendPaint()
+                workbook.suspendEvent()
+                let HeadTable = [
+                  'ID',
+                  'NGÀY TẠO',
+                  'TRẠNG THÁI',
+                  'HỌ TÊN',
+                  'SỐ ĐIỆN THOẠI',
+                  'GIÁ TRỊ ĐƠN HÀNG',
+                  'TRỪ TỪ ĐIỂM',
+                  'TRỪ TỪ THẺ TIỀN',
+                  'THANH TOÁN THÊM',
+                  'HOA HỒNG',
+                  'THỰC THU',
+                  'VẬN CHUYỂN',
+                  'SẢN PHẨM'
+                ]
+                var Response = [HeadTable]
+
+                for (let rowData of data.lst) {
+                  let newArr = [
+                    rowData.ID,
+                    moment(rowData?.CreateDate).format('DD-MM-YYYY'),
+                    rowData?.Status === 'finish' ? 'Hoàn thành' : rowData?.Status === 'cancel' ? 'Hủy' : 'Đang xử lý',
+                    rowData?.Member?.FullName,
+                    rowData?.Member?.MobilePhone,
+                    rowData?.ToPay,
+                    rowData?.DIEM,
+                    rowData?.TIEN,
+                    rowData?.ToPay - rowData?.DIEM - rowData?.TIEN,
+                    rowData?.TotalFMoney,
+                    rowData?.ToPay - rowData?.DIEM - rowData?.TIEN - rowData?.TotalFMoney,
+                    rowData?.Desc,
+                    rowData.Items && rowData.Items.map((x) => `${x.ProdTitle} (SL x${x.Qty})`).join('\n')
+                  ]
+                  Response.push(newArr)
+                }
+
+                let TotalColumn = HeadTable.length
+                let TotalRow = Response.length
+
+                sheet.setArray(2, 0, Response)
+
+                //title
+                workbook.getActiveSheet().getCell(0, 0).value(`Danh sách đơn hàng (${data?.total} ĐH)`)
+                workbook.getActiveSheet().getCell(0, 0).font('18pt Arial')
+                workbook
+                workbook.getActiveSheet().getRange(2, 0, 1, TotalColumn).font('12pt Arial')
+                workbook.getActiveSheet().getRange(2, 0, 1, TotalColumn).backColor('#E7E9EB')
+                //border
+                var border = new window.GC.Spread.Sheets.LineBorder()
+                border.color = '#000'
+                border.style = window.GC.Spread.Sheets.LineStyle.thin
+                workbook.getActiveSheet().getRange(2, 0, TotalRow, TotalColumn).borderLeft(border)
+                workbook.getActiveSheet().getRange(2, 0, TotalRow, TotalColumn).borderRight(border)
+                workbook.getActiveSheet().getRange(2, 0, TotalRow, TotalColumn).borderBottom(border)
+                workbook.getActiveSheet().getRange(2, 0, TotalRow, TotalColumn).borderTop(border)
+                //filter
+                var cellrange = new window.GC.Spread.Sheets.Range(3, 0, 1, TotalColumn)
+                var hideRowFilter = new window.GC.Spread.Sheets.Filter.HideRowFilter(cellrange)
+                workbook.getActiveSheet().rowFilter(hideRowFilter)
+
+                //format number
+                workbook.getActiveSheet().getCell(2, 0).hAlign(window.GC.Spread.Sheets.HorizontalAlign.center)
+
+                //auto fit width and height
+                workbook.getActiveSheet().autoFitRow(TotalRow + 2)
+                workbook.getActiveSheet().autoFitRow(0)
+                for (let i = 1; i < TotalColumn; i++) {
+                  workbook.getActiveSheet().autoFitColumn(i)
+                }
+
+                for (let i = 1; i < TotalRow + 2; i++) {
+                  workbook.getActiveSheet().setFormatter(i, 5, '#,#')
+                  workbook.getActiveSheet().setFormatter(i, 6, '#,#')
+                  workbook.getActiveSheet().setFormatter(i, 7, '#,#')
+                  workbook.getActiveSheet().setFormatter(i, 8, '#,#')
+                  workbook.getActiveSheet().setFormatter(i, 9, '#,#')
+                  workbook.getActiveSheet().setFormatter(i, 10, '#,#')
+
+                  sheet.getRange(i, 12, 1, 1).wordWrap(true)
+                  sheet.autoFitRow(i)
+                }
+
+                workbook.resumePaint()
+                workbook.resumeEvent()
+              })
+            } else {
+              toast.error('Không thể xuất Excel do dữ liệu trống hoặc lỗi')
+            }
+          }
+        }
+      )
+    }
+    else {
+      toast.error('Không thể xuất Excel do dữ liệu trống hoặc lỗi')
+    }
+  }
 
   const columns = useMemo(
     () => [
@@ -261,7 +382,8 @@ function OrdersPage() {
         key: 'Items',
         title: 'Sản phẩm',
         dataKey: 'Items',
-        cellRenderer: ({ rowData }) => rowData.Items && rowData.Items.map((x) => `${x.ProdTitle} (SL x${x.Qty})`).join(', '),
+        cellRenderer: ({ rowData }) =>
+          rowData.Items && rowData.Items.map((x) => `${x.ProdTitle} (SL x${x.Qty})`).join(', '),
         width: 300,
         sortable: false
       },
@@ -332,6 +454,8 @@ function OrdersPage() {
           setFilters({ pi: 1, ps: 20, key: '', frootid: 0 })
           onHide()
         }}
+        onExport={onExport}
+        loading={isLoading || excelMutation.isLoading}
       />
     </div>
   )

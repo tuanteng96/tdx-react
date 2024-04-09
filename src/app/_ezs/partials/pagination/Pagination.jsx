@@ -1,8 +1,11 @@
-import React from 'react'
 import clsx from 'clsx'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 
-const RANGE = 3
+let RANGE = 3
+
+if (window.innerWidth < 768) {
+  RANGE = 1
+}
 
 function Pagination({ pageCount, pageOffset = 1, pageSizes = 15, onChange }) {
   const renderPagination = () => {
