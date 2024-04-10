@@ -455,10 +455,19 @@ function MembersPage() {
             onClick={() =>
               setFilters((prevState) => ({
                 ...prevState,
+                pi: 1,
+                key: "",
+                frootid: 0,
+                ProvinceID: "",
+                DistrictID: "",
+                WardID: "",
+                FActive: "",
+                from: "",
+                to: "",
                 fpid: {
                   value: rowData.ID,
                   label: rowData.FullName
-                }
+                },
               }))
             }
           >
